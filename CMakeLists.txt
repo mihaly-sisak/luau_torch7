@@ -28,8 +28,8 @@ set(BLAS_USE_CBLAS_DOT FALSE)
 configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
 
 set(torch7_src
-    ./torch7/DiskFile.c
-    ./torch7/File.c
+#    ./torch7/DiskFile.c
+#    ./torch7/File.c
     ./torch7/Generator.c
 #    ./torch7/generic/Storage.c
 #    ./torch7/generic/Tensor.c
@@ -71,8 +71,8 @@ set(torch7_src
 #    ./torch7/lib/TH/vector/NEON.c
 #    ./torch7/lib/TH/vector/SSE.c
 #    ./torch7/lib/TH/vector/VSX.c
-    ./torch7/MemoryFile.c
-    ./torch7/PipeFile.c
+#    ./torch7/MemoryFile.c
+#    ./torch7/PipeFile.c
     ./torch7/Storage.c
     ./torch7/Tensor.c
     ./torch7/TensorOperator.c

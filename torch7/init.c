@@ -49,7 +49,7 @@ int luaopen_libtorch(lua_State *L)
   lua_setglobal(L, "torch");
 
   torch_utils_init(L);
-  torch_File_init(L);
+  //torch_File_init(L);
 
   torch_ByteStorage_init(L);
   torch_CharStorage_init(L);
@@ -78,9 +78,9 @@ int luaopen_libtorch(lua_State *L)
   torch_DoubleTensorOperator_init(L);
 
   torch_Timer_init(L);
-  torch_DiskFile_init(L);
-  torch_PipeFile_init(L);
-  torch_MemoryFile_init(L);
+  //torch_DiskFile_init(L);
+  //torch_PipeFile_init(L);
+  //torch_MemoryFile_init(L);
 
   torch_TensorMath_init(L);
 

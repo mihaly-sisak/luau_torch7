@@ -6,9 +6,17 @@ Proof of concept, be suprised if something works not if something does not.
 
 `example.lua` runs, output:
 ```
-tensor<2x2>(1, 1, 1, 1)
-tensor<2x2>(2, 2, 2, 2)
-tensor<2x2>(3, 3, 3, 3)
+ 1  2
+ 3  4
+[torch.DoubleTensor of size 2x2]
+
+ 1  1
+ 1  1
+[torch.DoubleTensor of size 2x2]
+
+ 2  3
+ 4  5
+[torch.DoubleTensor of size 2x2]
 ```
 
 ## How to build

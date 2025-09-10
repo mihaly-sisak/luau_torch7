@@ -268,10 +268,13 @@ static int luaT_iscdata(lua_State *L, int ud)
   {
     // initialize cdata metatable
     lua_pop(L, 1);
+
 #ifdef LUAJIT_ONLY
     if(luaL_dostring(L, cdatamt))
-#endif
       luaL_error(L, "internal error (could not load cdata mt): %s", lua_tostring(L, -1));
+#else
+    lua_newtable(L);
+#endif
 
     lua_pushlightuserdata(L, CDATA_MT_KEY);
     lua_pushvalue(L, -2);
