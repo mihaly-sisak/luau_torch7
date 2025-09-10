@@ -31,7 +31,7 @@ int exec_luau_source(lua_State* L, std::string& chunkname, std::string& source)
     int    load_result  = luau_load(L, chunkname.c_str(), bytecode, bytecodeSize, 0);
     free(bytecode);
 
-    // Load bytecode into VM
+    // load bytecode into VM
     if (load_result != 0)
     {
         std::cerr << "Load error: " << lua_tostring(L, -1) << std::endl;
@@ -40,7 +40,7 @@ int exec_luau_source(lua_State* L, std::string& chunkname, std::string& source)
         return 1;
     }
 
-    // Step 5: Execute script safely
+    // execute script
     if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0)
     {
         std::cerr << "Runtime error: " << lua_tostring(L, -1) << std::endl;

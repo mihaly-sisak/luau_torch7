@@ -63,7 +63,7 @@ int torch_islongargs(lua_State *L, int index)
 static __declspec( thread ) LARGE_INTEGER ticksPerSecond = { 0 };
 #endif
 
-#ifdef LUAJIT_ONLY
+#ifdef LUAU_DISABLED
 static int torch_isatty(lua_State *L)
 {
   FILE **fp = (FILE **) luaL_checkudata(L, -1, LUA_FILEHANDLE);

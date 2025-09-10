@@ -36,9 +36,9 @@ set(torch7_src
 #    ./torch7/generic/TensorOperator.c
     ./torch7/init.c
     ./torch7/lib/luaT/luaT.c
-#    ./torch7/lib/TH/generic/simd/convolve.c
-#    ./torch7/lib/TH/generic/simd/convolve5x5_avx.c
-#    ./torch7/lib/TH/generic/simd/convolve5x5_sse.c
+    ./torch7/lib/TH/generic/simd/convolve.c
+    ./torch7/lib/TH/generic/simd/convolve5x5_avx.c
+    ./torch7/lib/TH/generic/simd/convolve5x5_sse.c
 #    ./torch7/lib/TH/generic/THBlas.c
 #    ./torch7/lib/TH/generic/THLapack.c
 #    ./torch7/lib/TH/generic/THStorage.c
@@ -66,10 +66,10 @@ set(torch7_src
     ./torch7/lib/TH/THStorage.c
     ./torch7/lib/TH/THTensor.c
     ./torch7/lib/TH/THVector.c
-#    ./torch7/lib/TH/vector/AVX.c
-#    ./torch7/lib/TH/vector/AVX2.c
+    ./torch7/lib/TH/vector/AVX.c
+    ./torch7/lib/TH/vector/AVX2.c
 #    ./torch7/lib/TH/vector/NEON.c
-#    ./torch7/lib/TH/vector/SSE.c
+    ./torch7/lib/TH/vector/SSE.c
 #    ./torch7/lib/TH/vector/VSX.c
 #    ./torch7/MemoryFile.c
 #    ./torch7/PipeFile.c
@@ -82,12 +82,23 @@ set(torch7_src
     ./torch7/generated/TensorMath.c
 )
 
-#set_source_files_properties(${torch7_src} PROPERTIES LANGUAGE CXX)
+set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_sse.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math")
+set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_avx.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math -mavx")
+set_source_files_properties(./torch7/lib/TH/vector/AVX.c PROPERTIES COMPILE_FLAGS "-O3 -mavx")
+set_source_files_properties(./torch7/lib/TH/vector/AVX2.c PROPERTIES COMPILE_FLAGS "-O3 -mavx2 -mfma")
 
 add_library(torch7 ${torch7_src})
 
 target_compile_definitions(torch7 PRIVATE LUA_VERSION_NUM=501)
 target_compile_definitions(torch7 PRIVATE LUAU=1)
+
+target_compile_definitions(torch7 PRIVATE USE_SSE2)
+target_compile_definitions(torch7 PRIVATE USE_SSE3)
+target_compile_definitions(torch7 PRIVATE USE_SSSE3)
+target_compile_definitions(torch7 PRIVATE USE_SSE4_1)
+target_compile_definitions(torch7 PRIVATE USE_SSE4_2)
+target_compile_definitions(torch7 PRIVATE USE_AVX)
+target_compile_definitions(torch7 PRIVATE USE_AVX2)
 
 # choose one
 #target_compile_definitions(torch7 PRIVATE USE_C11_ATOMICS)

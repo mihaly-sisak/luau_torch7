@@ -65,6 +65,7 @@ static int torch_Storage_(new)(lua_State *L)
     storage->view = src;
     THStorage_(retain)(storage->view);
   }
+#ifdef LUAU_DISABLED
   else if(lua_type(L, index + 1) == LUA_TNUMBER)
   {
     ptrdiff_t size = luaL_optinteger(L, index, 0);
@@ -75,6 +76,7 @@ static int torch_Storage_(new)(lua_State *L)
       storage = THStorage_(newWithData)(ptr, size);
     storage->flag = TH_STORAGE_REFCOUNTED;
   }
+#endif
   else
   {
     ptrdiff_t size = luaL_optinteger(L, index, 0);

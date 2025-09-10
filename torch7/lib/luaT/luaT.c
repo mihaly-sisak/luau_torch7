@@ -219,7 +219,7 @@ static const char* luaT_cdataname(lua_State *L, int ud, const char *tname)
   {
     lua_pop(L, 1);
 
-#ifdef LUAJIT_ONLY
+#ifdef LUAU_DISABLED
     if(luaL_dostring(L, cdataname)) /* did something go wrong? */
 #endif
       luaL_error(L, "internal error (could not load cdataname): %s", lua_tostring(L, -1));
@@ -269,7 +269,7 @@ static int luaT_iscdata(lua_State *L, int ud)
     // initialize cdata metatable
     lua_pop(L, 1);
 
-#ifdef LUAJIT_ONLY
+#ifdef LUAU_DISABLED
     if(luaL_dostring(L, cdatamt))
       luaL_error(L, "internal error (could not load cdata mt): %s", lua_tostring(L, -1));
 #else
@@ -1016,7 +1016,7 @@ int luaT_lua_isequal(lua_State *L)
   return 1;
 }
 
-#ifdef LUAJIT_ONLY
+#ifdef LUAU_DISABLED
 static void luaT_pushpointer(lua_State *L, const void *ptr)
 {
 #if LUA_VERSION_NUM >= 503
