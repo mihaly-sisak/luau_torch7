@@ -2,9 +2,17 @@
 
 Luau-compatible fork of Torch7.
 
-Proof of concept, be suprised if something works not if something does not.
+Removed Torch7 features:
+ - File
+ - DiskFile
+ - MemoryFile
+ - PipeFile
+ - CmdLine
+ - FFInterface
+ - Tester
+ - TestSuite
 
-`example.lua` runs, output:
+`example.lua` output:
 ```
  1  2
  3  4
