@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 
     // load Torch7 lua init code, this modifies global state
     {
-        std::string torch7_filename = "./torch_luau.lua";
+        std::string torch7_filename = "./torch.lua";
         std::string torch7_src      = load_file_to_string(torch7_filename);
         exec_luau_source(L, torch7_filename, torch7_src);
     }
