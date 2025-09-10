@@ -1,0 +1,30 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 404d1923..711124f2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,7 +4,7 @@ if(EXT_PLATFORM_STRING)
+     return()
+ endif()
+ 
+-cmake_minimum_required(VERSION 3.10)
++cmake_minimum_required(VERSION 3.15)
+ 
+ option(LUAU_BUILD_CLI "Build CLI" ON)
+ option(LUAU_BUILD_TESTS "Build tests" ON)
+diff --git a/VM/include/luaconf.h b/VM/include/luaconf.h
+index 931794a9..56d51bfa 100644
+--- a/VM/include/luaconf.h
++++ b/VM/include/luaconf.h
+@@ -47,8 +47,12 @@
+ 
+ // Can be used to reconfigure visibility/exports for public APIs
+ #ifndef LUA_API
++#ifdef __cplusplus
++#define LUA_API extern "C"
++#else
+ #define LUA_API extern
+ #endif
++#endif
+ 
+ #define LUALIB_API LUA_API
+ 

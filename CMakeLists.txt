@@ -1,91 +1,129 @@
-IF(APPLE)
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12 FATAL_ERROR)
-  CMAKE_POLICY(VERSION 2.8.12)
-ELSE()
-  CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
-  CMAKE_POLICY(VERSION 2.8)
-ENDIF()
+cmake_minimum_required(VERSION 3.15)
+project(LuauTorch7Example CXX C)
 
-SET(CMAKE_MODULE_PATH
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-  "${CMAKE_MODULE_PATH}")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-IF (NOT MSVC)
-  IF (MINGW)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror=format")
-  ELSE()
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror=implicit-function-declaration -Werror=format")
-  ENDIF(MINGW)
-ENDIF(NOT MSVC)
+add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
 
-# Flags
-# When using MSVC
-IF(MSVC)
-  # we want to respect the standard, and we are bored of those **** .
-  ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE=1)
-ENDIF(MSVC)
+# Luau
 
-# OpenMP support?
-SET(WITH_OPENMP ON CACHE BOOL "OpenMP support if available?")
-IF (APPLE AND CMAKE_COMPILER_IS_GNUCC)
-  EXEC_PROGRAM (uname ARGS -v  OUTPUT_VARIABLE DARWIN_VERSION)
-  STRING (REGEX MATCH "[0-9]+" DARWIN_VERSION ${DARWIN_VERSION})
-  MESSAGE (STATUS "MAC OS Darwin Version: ${DARWIN_VERSION}")
-  IF (DARWIN_VERSION GREATER 9)
-    SET(APPLE_OPENMP_SUCKS 1)
-  ENDIF (DARWIN_VERSION GREATER 9)
-  EXECUTE_PROCESS (COMMAND ${CMAKE_C_COMPILER} -dumpversion
-    OUTPUT_VARIABLE GCC_VERSION)
-  IF (APPLE_OPENMP_SUCKS AND GCC_VERSION VERSION_LESS 4.6.2)
-    MESSAGE(STATUS "Warning: Disabling OpenMP (unstable with this version of GCC)")
-    MESSAGE(STATUS " Install GCC >= 4.6.2 or change your OS to enable OpenMP")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unknown-pragmas")
-    SET(WITH_OPENMP OFF CACHE BOOL "OpenMP support if available?" FORCE)
-  ENDIF ()
-ENDIF ()
+set(LUAU_BUILD_CLI   OFF)
+set(LUAU_BUILD_TESTS OFF)
+set(LUAU_BUILD_WEB   OFF)
+set(LUAU_WERROR      OFF)
+set(LUAU_STATIC_CRT  OFF)
+set(LUAU_EXTERN_C    OFF)
 
-IF (WITH_OPENMP)
-  FIND_PACKAGE(OpenMP)
-  IF(OPENMP_FOUND)
-    MESSAGE(STATUS "Compiling with OpenMP support")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-  ENDIF(OPENMP_FOUND)
-ENDIF (WITH_OPENMP)
+add_subdirectory(luau)
 
-# Includes
-INCLUDE(TorchPaths)
-INCLUDE(TorchPathsInit)
-INCLUDE(TorchPackage)
-INCLUDE(TorchWrap)
-INCLUDE(TorchExports)
+# Torch7
 
-# Torch libraries
-ADD_SUBDIRECTORY(lib)
+set(USE_BLAS           FALSE)
+set(USE_LAPACK         FALSE)
+set(BLAS_F2C           FALSE)
+set(BLAS_USE_CBLAS_DOT FALSE)
 
-CONFIGURE_FILE(paths.lua.in "${CMAKE_CURRENT_BINARY_DIR}/paths.lua")
+configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
 
-INCLUDE_DIRECTORIES(BEFORE "${LUA_INCDIR}")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/lib/TH")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_BINARY_DIR}/lib/TH")
-INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}/lib/luaT")
-LINK_DIRECTORIES("${LUA_LIBDIR}")
+set(torch7_src
+    ./torch7/DiskFile.c
+    ./torch7/File.c
+    ./torch7/Generator.c
+#    ./torch7/generic/Storage.c
+#    ./torch7/generic/Tensor.c
+#    ./torch7/generic/TensorOperator.c
+    ./torch7/init.c
+    ./torch7/lib/luaT/luaT.c
+#    ./torch7/lib/TH/generic/simd/convolve.c
+#    ./torch7/lib/TH/generic/simd/convolve5x5_avx.c
+#    ./torch7/lib/TH/generic/simd/convolve5x5_sse.c
+#    ./torch7/lib/TH/generic/THBlas.c
+#    ./torch7/lib/TH/generic/THLapack.c
+#    ./torch7/lib/TH/generic/THStorage.c
+#    ./torch7/lib/TH/generic/THStorageCopy.c
+#    ./torch7/lib/TH/generic/THTensor.c
+#    ./torch7/lib/TH/generic/THTensorConv.c
+#    ./torch7/lib/TH/generic/THTensorCopy.c
+#    ./torch7/lib/TH/generic/THTensorLapack.c
+#    ./torch7/lib/TH/generic/THTensorMath.c
+#    ./torch7/lib/TH/generic/THTensorRandom.c
+#    ./torch7/lib/TH/generic/THVectorDefault.c
+#    ./torch7/lib/TH/generic/THVectorDispatch.c
+    ./torch7/lib/TH/THAllocator.c
+    ./torch7/lib/TH/THAtomic.c
+    ./torch7/lib/TH/THBlas.c
+    ./torch7/lib/TH/THDiskFile.c
+    ./torch7/lib/TH/THFile.c
+    ./torch7/lib/TH/THGeneral.c
+    ./torch7/lib/TH/THHalf.c
+    ./torch7/lib/TH/THLapack.c
+    ./torch7/lib/TH/THLogAdd.c
+    ./torch7/lib/TH/THMemoryFile.c
+    ./torch7/lib/TH/THRandom.c
+    ./torch7/lib/TH/THSize.c
+    ./torch7/lib/TH/THStorage.c
+    ./torch7/lib/TH/THTensor.c
+    ./torch7/lib/TH/THVector.c
+#    ./torch7/lib/TH/vector/AVX.c
+#    ./torch7/lib/TH/vector/AVX2.c
+#    ./torch7/lib/TH/vector/NEON.c
+#    ./torch7/lib/TH/vector/SSE.c
+#    ./torch7/lib/TH/vector/VSX.c
+    ./torch7/MemoryFile.c
+    ./torch7/PipeFile.c
+    ./torch7/Storage.c
+    ./torch7/Tensor.c
+    ./torch7/TensorOperator.c
+    ./torch7/Timer.c
+    ./torch7/utils.c
+    ./torch7/generated/random.c
+    ./torch7/generated/TensorMath.c
+)
 
-SET(src DiskFile.c File.c MemoryFile.c PipeFile.c Storage.c Tensor.c Timer.c utils.c init.c TensorOperator.c TensorMath.c random.c Generator.c)
-SET(luasrc init.lua File.lua Tensor.lua CmdLine.lua FFInterface.lua Tester.lua TestSuite.lua ${CMAKE_CURRENT_BINARY_DIR}/paths.lua test/test.lua)
+#set_source_files_properties(${torch7_src} PROPERTIES LANGUAGE CXX)
 
-# Necessary do generate wrapper
-ADD_TORCH_WRAP(tensormathwrap TensorMath.lua)
-ADD_TORCH_WRAP(randomwrap random.lua)
+add_library(torch7 ${torch7_src})
 
-ADD_TORCH_PACKAGE(torch "${src}" "${luasrc}")
+target_compile_definitions(torch7 PRIVATE LUA_VERSION_NUM=501)
+target_compile_definitions(torch7 PRIVATE LUAU=1)
 
-TARGET_LINK_LIBRARIES(torch luaT TH)
+# choose one
+#target_compile_definitions(torch7 PRIVATE USE_C11_ATOMICS)
+#target_compile_definitions(torch7 PRIVATE USE_MSC_ATOMICS)
+target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
+#target_compile_definitions(torch7 PRIVATE USE_PTHREAD_ATOMICS)
 
-IF(LUALIB)
-  TARGET_LINK_LIBRARIES(torch ${LUALIB})
-ENDIF()
+# choose one
+#target_compile_definitions(torch7 PRIVATE _WIN32)
+target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
 
-INSTALL(FILES "README.md" DESTINATION "${Torch_INSTALL_LUA_PATH_SUBDIR}/torch")
-INSTALL(DIRECTORY "doc" DESTINATION "${Torch_INSTALL_LUA_PATH_SUBDIR}/torch")
+#target_compile_options(torch7 PRIVATE -fpermissive)
+
+target_include_directories(torch7 PRIVATE
+    ./torch7/lib/luaT
+    ./torch7/lib/TH
+    ./torch7
+    ./luau/VM/include
+    ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_link_libraries(torch7 PRIVATE
+    Luau.VM
+)
+
+# main exe
+
+add_executable(luau_example example.cpp)
+
+target_link_libraries(luau_example PRIVATE
+    Luau.VM
+    Luau.Compiler
+    torch7
+)
+
+target_include_directories(luau_example PRIVATE
+    ./luau/VM/include
+    ./luau/Compiler/include
+)

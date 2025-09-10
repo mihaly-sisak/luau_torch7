@@ -1,0 +1,10 @@
+{
+    "clangd.arguments": [
+        "-j=3",
+        "--malloc-trim",
+        "--pch-storage=memory",
+        "--header-insertion=never",
+        "--background-index", 
+        "--compile-commands-dir=${workspaceFolder}/_build/",
+    ],
+}
