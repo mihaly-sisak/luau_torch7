@@ -20,13 +20,6 @@ add_subdirectory(luau)
 
 # Torch7
 
-set(USE_BLAS           FALSE)
-set(USE_LAPACK         FALSE)
-set(BLAS_F2C           FALSE)
-set(BLAS_USE_CBLAS_DOT FALSE)
-
-configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
-
 set(torch7_src
 #    ./torch7/DiskFile.c
 #    ./torch7/File.c
@@ -82,35 +75,10 @@ set(torch7_src
     ./torch7/generated/TensorMath.c
 )
 
-set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_sse.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math")
-set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_avx.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math -mavx")
-set_source_files_properties(./torch7/lib/TH/vector/AVX.c PROPERTIES COMPILE_FLAGS "-O3 -mavx")
-set_source_files_properties(./torch7/lib/TH/vector/AVX2.c PROPERTIES COMPILE_FLAGS "-O3 -mavx2 -mfma")
-
 add_library(torch7 ${torch7_src})
 
 target_compile_definitions(torch7 PRIVATE LUA_VERSION_NUM=501)
 target_compile_definitions(torch7 PRIVATE LUAU=1)
-
-target_compile_definitions(torch7 PRIVATE USE_SSE2)
-target_compile_definitions(torch7 PRIVATE USE_SSE3)
-target_compile_definitions(torch7 PRIVATE USE_SSSE3)
-target_compile_definitions(torch7 PRIVATE USE_SSE4_1)
-target_compile_definitions(torch7 PRIVATE USE_SSE4_2)
-target_compile_definitions(torch7 PRIVATE USE_AVX)
-target_compile_definitions(torch7 PRIVATE USE_AVX2)
-
-# choose one
-#target_compile_definitions(torch7 PRIVATE USE_C11_ATOMICS)
-#target_compile_definitions(torch7 PRIVATE USE_MSC_ATOMICS)
-target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
-#target_compile_definitions(torch7 PRIVATE USE_PTHREAD_ATOMICS)
-
-# choose one
-#target_compile_definitions(torch7 PRIVATE _WIN32)
-target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
-
-#target_compile_options(torch7 PRIVATE -fpermissive)
 
 target_include_directories(torch7 PRIVATE
     ./torch7/lib/luaT
@@ -123,6 +91,42 @@ target_include_directories(torch7 PRIVATE
 target_link_libraries(torch7 PRIVATE
     Luau.VM
 )
+
+# Torch7 blas, lapack
+
+set(USE_BLAS           FALSE)
+set(USE_LAPACK         FALSE)
+set(BLAS_F2C           FALSE)
+set(BLAS_USE_CBLAS_DOT FALSE)
+
+configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
+
+# Torch7 vector extensions
+
+target_compile_definitions(torch7 PRIVATE USE_SSE2)
+target_compile_definitions(torch7 PRIVATE USE_SSE3)
+target_compile_definitions(torch7 PRIVATE USE_SSSE3)
+target_compile_definitions(torch7 PRIVATE USE_SSE4_1)
+target_compile_definitions(torch7 PRIVATE USE_SSE4_2)
+target_compile_definitions(torch7 PRIVATE USE_AVX)
+target_compile_definitions(torch7 PRIVATE USE_AVX2)
+
+set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_sse.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math")
+set_source_files_properties(./torch7/lib/TH/generic/simd/convolve5x5_avx.c PROPERTIES COMPILE_FLAGS "-O3 -ffast-math -mavx")
+set_source_files_properties(./torch7/lib/TH/vector/AVX.c PROPERTIES COMPILE_FLAGS "-O3 -mavx")
+set_source_files_properties(./torch7/lib/TH/vector/AVX2.c PROPERTIES COMPILE_FLAGS "-O3 -mavx2 -mfma")
+
+# Torch7 atomics
+
+#target_compile_definitions(torch7 PRIVATE USE_C11_ATOMICS)
+#target_compile_definitions(torch7 PRIVATE USE_MSC_ATOMICS)
+target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
+#target_compile_definitions(torch7 PRIVATE USE_PTHREAD_ATOMICS)
+
+# Torch7 mmap
+
+#target_compile_definitions(torch7 PRIVATE _WIN32)
+target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
 
 # main exe
 
