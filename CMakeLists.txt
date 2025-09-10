@@ -94,10 +94,20 @@ target_link_libraries(torch7 PRIVATE
 
 # Torch7 blas, lapack
 
-set(USE_BLAS           FALSE)
-set(USE_LAPACK         FALSE)
-set(BLAS_F2C           FALSE)
-set(BLAS_USE_CBLAS_DOT FALSE)
+set(USE_BLAS   FALSE)
+set(USE_LAPACK FALSE)
+
+find_package(BLAS)
+if(BLAS_FOUND)
+    set(USE_BLAS TRUE)
+    target_link_libraries(torch7 PRIVATE ${BLAS_LIBRARIES})
+endif()
+
+find_package(LAPACK)
+if(LAPACK_FOUND)
+    set(USE_LAPACK TRUE)
+    target_link_libraries(torch7 PRIVATE ${LAPACK_LIBRARIES})
+endif()
 
 configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
 
