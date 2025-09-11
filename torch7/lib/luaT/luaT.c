@@ -211,6 +211,11 @@ static const char cdataname[] = ""
   "  return function() end\n"
   "end\n";
 
+static int luaT_c_noop(lua_State *L) {
+  // do nothing, return no values
+  return 0;
+}
+
 static const char* luaT_cdataname(lua_State *L, int ud, const char *tname)
 {
   lua_pushstring(L, "__cdataname");
@@ -221,8 +226,10 @@ static const char* luaT_cdataname(lua_State *L, int ud, const char *tname)
 
 #ifdef LUAU_DISABLED
     if(luaL_dostring(L, cdataname)) /* did something go wrong? */
-#endif
       luaL_error(L, "internal error (could not load cdataname): %s", lua_tostring(L, -1));
+#else
+    lua_pushcfunction(L, luaT_c_noop, "luaT_c_noop");
+#endif
 
     lua_pushstring(L, "__cdataname");
     lua_pushvalue(L, -2);
