@@ -940,6 +940,7 @@ int luaT_lua_metatype(lua_State *L)
   return 0;
 }
 
+#ifdef LUAU_DISABLED
 /* return a userdata from a C pointer */
 /* you are better to know what you are doing */
 int luaT_lua_pushudata(lua_State *L)
@@ -960,6 +961,7 @@ int luaT_lua_pushudata(lua_State *L)
 
   return 1;
 }
+#endif
 
 int luaT_lua_factory(lua_State *L)
 {

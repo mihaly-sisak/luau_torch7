@@ -4,7 +4,8 @@ Luau-compatible fork of Torch7.
 
 Some features needed to be removed, for the following reasons:
  - Luau does not support files to protect user filesystem
- - Luau does not have FFI library
+ - Luau does not have `FFI` library
+ - Luau does not have `lua_topointer` function
  - Lua `number` max representable integer is 2^53, this can hold 32 bit pointers but can not hold 64 bit ones
 
 Removed Torch7 features:
@@ -22,6 +23,7 @@ Removed Torch7 features:
    - [torch_Storage_(new)](torch7/generic/Storage.c#L69), allocating storage from Lua with a pointer + size
    - [luaT_pushpointer](torch7/lib/luaT/luaT.c#L1027), pushing pointer to stack
    - [luaT_lua_pointer](torch7/lib/luaT/luaT.c#L1042), getting pointer of lua object
+   - [luaT_lua_pushudata](torch7/lib/luaT/luaT.c#L946), no `lua_topointer`
 
 `example.lua` output:
 ```
