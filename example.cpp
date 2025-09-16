@@ -87,7 +87,7 @@ int c_tensor_init(lua_State* L)
     return 1;
 }
 
-int c_tensor_mod(lua_State* L)
+int c_tensor_modify(lua_State* L)
 {
     int narg = lua_gettop(L);
     if (narg != 1) 
@@ -119,18 +119,20 @@ int main(int argc, char** argv)
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
 
-    lua_pushcfunction(L, c_tensor_init, "c_tensor_init");
-    lua_setglobal(L, "c_tensor_init");
-
-    lua_pushcfunction(L, c_tensor_mod, "c_tensor_mod");
-    lua_setglobal(L, "c_tensor_mod");
+    // load Torch7 C library
+    luaopen_libtorch(L);
 
     // load Torch7 lua init code, this modifies global state
-    luaopen_libtorch(L);
     {
         std::string torch7_src = std::string(reinterpret_cast<char*>(torch_lua), torch_lua_len);
         if (exec_luau_source(L, "torch7_init", torch7_src)) return 1;
     }
+
+    // load user defined functions
+    lua_pushcfunction(L, c_tensor_init, "c_tensor_init");
+    lua_setglobal(L, "c_tensor_init");
+    lua_pushcfunction(L, c_tensor_modify, "c_tensor_modify");
+    lua_setglobal(L, "c_tensor_modify");
 
     // lock global state
     luaL_sandbox(L);

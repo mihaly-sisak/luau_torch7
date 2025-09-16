@@ -7,7 +7,7 @@ print(y)
 print(z)
 
 print(c_tensor_init())
-print(c_tensor_mod(c_tensor_init()))
+print(c_tensor_modify(c_tensor_init()))
 
 local test = function(a)
     print(a)
