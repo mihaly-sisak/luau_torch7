@@ -150,7 +150,7 @@ function torch.isTypeOf(obj, typeSpec)
    return false
 end
 
-torch.setdefaulttensortype('torch.DoubleTensor')
+torch.setdefaulttensortype('torch.FloatTensor')
 
 ------------------------- require('torch.Tensor')
 

@@ -1,6 +1,12 @@
 #ifndef TORCH_UTILS_INC
 #define TORCH_UTILS_INC
 
+// LUA_API == `extern "C"`, should be only `extern` in C code
+#if defined(LUA_API) && !defined(__cplusplus)
+#undef LUA_API
+#define LUA_API extern
+#endif
+
 #include "luaT.h"
 #include "TH.h"
 

@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(LuauTorch7Example CXX C)
+project(LuauTorch7 C)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
+option(BUILD_LUAU_TORCH7_EXAMPLE "Build standalone example exe" ON)
 
 # Luau
 
-set(LUAU_BUILD_CLI   OFF)
-set(LUAU_BUILD_TESTS OFF)
-set(LUAU_BUILD_WEB   OFF)
-set(LUAU_WERROR      OFF)
-set(LUAU_STATIC_CRT  OFF)
-set(LUAU_EXTERN_C    OFF)
+set(LUAU_BUILD_CLI   OFF CACHE BOOL "Build CLI"                      FORCE)
+set(LUAU_BUILD_TESTS OFF CACHE BOOL "Build tests"                    FORCE)
+set(LUAU_BUILD_WEB   OFF CACHE BOOL "Build Web module"               FORCE)
+set(LUAU_WERROR      OFF CACHE BOOL "Warnings as errors"             FORCE)
+set(LUAU_STATIC_CRT  OFF CACHE BOOL "Link with the static CRT (/MT)" FORCE)
+set(LUAU_EXTERN_C    ON  CACHE BOOL "Use extern C for all APIs"      FORCE)
 
 add_subdirectory(luau)
 
@@ -73,19 +69,19 @@ set(torch7_src
     ./torch7/utils.c
     ./torch7/generated/random.c
     ./torch7/generated/TensorMath.c
+    ./torch_lua.c
 )
 
 add_library(torch7 ${torch7_src})
 
-target_compile_definitions(torch7 PRIVATE LUA_VERSION_NUM=501)
-target_compile_definitions(torch7 PRIVATE LUAU=1)
+target_compile_definitions(torch7 PUBLIC LUA_VERSION_NUM=501)
+target_compile_definitions(torch7 PUBLIC LUAU=1)
 
 target_include_directories(torch7 PRIVATE
     ./torch7/lib/luaT
     ./torch7/lib/TH
     ./torch7
     ./luau/VM/include
-    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_link_libraries(torch7 PRIVATE
@@ -109,9 +105,10 @@ if(LAPACK_FOUND)
     target_link_libraries(torch7 PRIVATE ${LAPACK_LIBRARIES})
 endif()
 
-configure_file(./torch7/lib/TH/THGeneral.h.in "${CMAKE_CURRENT_BINARY_DIR}/THGeneral.h")
+# putting configured file in source dir, needed for accessing torch types from cpp code
+configure_file(./torch7/lib/TH/THGeneral.h.in ${CMAKE_CURRENT_SOURCE_DIR}/torch7/lib/TH/THGeneral.h)
 
-# Torch7 vector extensions
+# Torch7 vector extensions, has runtime CPU feature detection
 
 target_compile_definitions(torch7 PRIVATE USE_SSE2)
 target_compile_definitions(torch7 PRIVATE USE_SSE3)
@@ -128,27 +125,51 @@ set_source_files_properties(./torch7/lib/TH/vector/AVX2.c PROPERTIES COMPILE_FLA
 
 # Torch7 atomics
 
+if (WIN32 OR MINGW)
+    target_compile_definitions(torch7 PRIVATE USE_MSC_ATOMICS)
+    message("Torch7 atomics: MSC")
+elseif (UNIX)
+    target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
+    message("Torch7 atomics: GCC")
+else()
+    message(FATAL_ERROR "Torch7 atomics: error")
+endif()
+
+# all atomics options
 #target_compile_definitions(torch7 PRIVATE USE_C11_ATOMICS)
 #target_compile_definitions(torch7 PRIVATE USE_MSC_ATOMICS)
-target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
+#target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
 #target_compile_definitions(torch7 PRIVATE USE_PTHREAD_ATOMICS)
 
 # Torch7 mmap
 
-#target_compile_definitions(torch7 PRIVATE _WIN32)
-target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
+if (WIN32 OR MINGW)
+    target_compile_definitions(torch7 PRIVATE _WIN32)
+    message("Torch7 mmap: Win32")
+elseif (UNIX)
+    target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
+    message("Torch7 mmap: mmap")
+else()
+    message(FATAL_ERROR "Torch7 mmap: error")
+endif()
 
 # main exe
 
-add_executable(luau_example example.cpp)
+if (BUILD_LUAU_TORCH7_EXAMPLE)
 
-target_link_libraries(luau_example PRIVATE
-    Luau.VM
-    Luau.Compiler
-    torch7
-)
+    enable_language(CXX)
 
-target_include_directories(luau_example PRIVATE
-    ./luau/VM/include
-    ./luau/Compiler/include
-)
+    add_executable(luau_example example.cpp)
+
+    target_link_libraries(luau_example PRIVATE
+        Luau.VM
+        Luau.Compiler
+        torch7
+    )
+
+    target_include_directories(luau_example PRIVATE
+        ./luau/VM/include
+        ./luau/Compiler/include
+    )
+
+endif()

@@ -5,7 +5,9 @@
 #include "luacode.h"
 #include "lua.h"
 #include "lualib.h"
-#include "torch7/init.h"
+#include "torch7/torch7.h"
+#include "torch7/lib/TH/TH.h"
+#include "torch7/lib/luaT/luaT.h"
 
 std::string load_file_to_string(std::string& filename)
 {
@@ -20,11 +22,18 @@ std::string load_file_to_string(std::string& filename)
     return buffer.str();
 }
 
-int exec_luau_source(lua_State* L, std::string& chunkname, std::string& source)
+int exec_luau_source(lua_State* L, std::string chunkname, std::string& source)
 {
     lua_CompileOptions complile_options = {};
-    complile_options.optimizationLevel = 2;
-    complile_options.debugLevel        = 0;
+    //// debug
+    //complile_options.optimizationLevel = 0;
+    //complile_options.debugLevel        = 2;
+    // default
+    complile_options.optimizationLevel = 1;
+    complile_options.debugLevel        = 1;
+    //// performance
+    //complile_options.optimizationLevel = 2;
+    //complile_options.debugLevel        = 0;
     
     size_t bytecodeSize = 0;
     char * bytecode     = luau_compile(source.c_str(), source.size(), &complile_options, &bytecodeSize);
@@ -40,8 +49,20 @@ int exec_luau_source(lua_State* L, std::string& chunkname, std::string& source)
         return 1;
     }
 
+    /* Stack: [ ... , chunk ] */
+
+    /* 2) push debug.traceback and remove the debug table (so stack becomes [ ... , chunk, traceback] ) */
+    lua_getglobal(L, "debug");            /* pushes debug table */
+    lua_getfield(L, -1, "traceback");     /* pushes debug.traceback */
+    lua_remove(L, -2);                    /* remove debug table; stack: [ ... , chunk, traceback ] */
+
+    /* 3) move traceback *below* the chunk => stack becomes [ ... , traceback, chunk ] */
+    lua_insert(L, -2);
+
+    int errfunc = lua_gettop(L) - 1;
+
     // execute script
-    if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0)
+    if (lua_pcall(L, 0, LUA_MULTRET, errfunc) != 0)
     {
         std::cerr << "Runtime error: " << lua_tostring(L, -1) << std::endl;
         lua_pop(L, 1); // remove error from stack
@@ -49,7 +70,41 @@ int exec_luau_source(lua_State* L, std::string& chunkname, std::string& source)
         return 1;
     }
 
+    lua_remove(L, errfunc);
+
     return 0;
+}
+
+int c_tensor_init(lua_State* L)
+{
+    int size_0 = 3;
+    int size_1 = 3;
+    THFloatTensor* t = THFloatTensor_newWithSize2d(size_0, size_1);
+    for (int x1 = 0; x1 < size_1; x1++)
+        for (int x0 = 0; x0 < size_0; x0++)
+            THFloatTensor_set2d(t, x0, x1, 1.0f);
+    luaT_pushudata(L, t, "torch.FloatTensor");
+    return 1;
+}
+
+int c_tensor_mod(lua_State* L)
+{
+    int narg = lua_gettop(L);
+    if (narg != 1) 
+        luaL_error(L, "expected 1 argument");
+    THFloatTensor *arg1 = (THFloatTensor*)luaT_toudata(L, 1, "torch.FloatTensor");
+    if (arg1 == NULL) 
+        luaL_error(L, "expected torch.FloatTensor argument");
+    if (THFloatTensor_nDimension(arg1) != 2) 
+        luaL_error(L, "expected 2d torch.FloatTensor argument");
+    int size_0 = THFloatTensor_size(arg1, 0);
+    int size_1 = THFloatTensor_size(arg1, 1);
+    THFloatTensor *ret  = THFloatTensor_newWithSize2d(size_0, size_1);
+    for (int x1 = 0; x1 < size_1; x1++)
+        for (int x0 = 0; x0 < size_0; x0++)
+            THFloatTensor_set2d(ret, x0, x1, THFloatTensor_get2d(arg1, x0, x1) * 2.0f);
+    luaT_pushudata(L, ret, "torch.FloatTensor");
+    return 1;
 }
 
 int main(int argc, char** argv)
@@ -63,13 +118,18 @@ int main(int argc, char** argv)
     // create a new Luau VM state
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
-    luaopen_libtorch(L);
+
+    lua_pushcfunction(L, c_tensor_init, "c_tensor_init");
+    lua_setglobal(L, "c_tensor_init");
+
+    lua_pushcfunction(L, c_tensor_mod, "c_tensor_mod");
+    lua_setglobal(L, "c_tensor_mod");
 
     // load Torch7 lua init code, this modifies global state
+    luaopen_libtorch(L);
     {
-        std::string torch7_filename = "./torch.lua";
-        std::string torch7_src      = load_file_to_string(torch7_filename);
-        exec_luau_source(L, torch7_filename, torch7_src);
+        std::string torch7_src = std::string(reinterpret_cast<char*>(torch_lua), torch_lua_len);
+        if (exec_luau_source(L, "torch7_init", torch7_src)) return 1;
     }
 
     // lock global state
@@ -79,7 +139,7 @@ int main(int argc, char** argv)
     {
         std::string user_filename = std::string(argv[1]);
         std::string user_src      = load_file_to_string(user_filename);
-        exec_luau_source(L, user_filename, user_src);
+        if (exec_luau_source(L, user_filename, user_src)) return 1;
     }
 
     lua_close(L);
