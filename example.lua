@@ -9,9 +9,9 @@ print(z)
 print(c_tensor_init())
 print(c_tensor_modify(c_tensor_init()))
 
-local test = function(a)
-    print(a)
-    error(a)
+local test = function(t, e)
+    print(t)
+    error(e)
 end
 
-test("a")
+test("testing traceback", "example error")
