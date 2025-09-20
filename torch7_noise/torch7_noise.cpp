@@ -13,8 +13,6 @@ static int torch_noise_simplex2D(lua_State *L)
     if (narg == 7){
         res = (THFloatTensor*)luaT_toudata(L, -7, "torch.FloatTensor");
         if (res == NULL) luaL_error(L, usage_str, "argument res is not a torch.FloatTensor");
-        if (THFloatTensor_nDimension(res) != 2) luaL_error(L, usage_str, "argument res is not a 2D torch.FloatTensor");
-        if (THFloatTensor_isContiguous(res) == 0) luaL_error(L, usage_str, "argument res is not a contiguous torch.FloatTensor");
     }
     float scale = lua_tonumberx(L, -6, &isnum);
     if (isnum == 0) luaL_error(L, usage_str, "argument scale is not a number");
@@ -29,6 +27,7 @@ static int torch_noise_simplex2D(lua_State *L)
     int seed = lua_tointegerx(L, -1, &isnum);
     if (isnum == 0) luaL_error(L, usage_str, "argument seed is not an integer");
     if (res){
+        // resize guarantees res is 2d and contiguous
         THFloatTensor_resize2d(res, xsize, ysize);
     }
     else {
@@ -51,8 +50,6 @@ static int torch_noise_node2D(lua_State *L)
     if (narg == 7){
         res = (THFloatTensor*)luaT_toudata(L, -7, "torch.FloatTensor");
         if (res == NULL) luaL_error(L, usage_str, "argument res is not a torch.FloatTensor");
-        if (THFloatTensor_nDimension(res) != 2) luaL_error(L, usage_str, "argument res is not a 2D torch.FloatTensor");
-        if (THFloatTensor_isContiguous(res) == 0) luaL_error(L, usage_str, "argument res is not a contiguous torch.FloatTensor");
     }
     const char* str = lua_tostring(L, -6);
     if (str == NULL) luaL_error(L, usage_str, "argument str is not a string");
@@ -67,6 +64,7 @@ static int torch_noise_node2D(lua_State *L)
     int seed = lua_tointegerx(L, -1, &isnum);
     if (isnum == 0) luaL_error(L, usage_str, "argument seed is not an integer");
     if (res){
+        // resize guarantees res is 2d and contiguous
         THFloatTensor_resize2d(res, xsize, ysize);
     }
     else {
