@@ -15,21 +15,17 @@ make
 sudo make install
 
 # install rock cwrap
-cd ../../luarock_modules/cwrap
+cd ../cwrap
 sudo luarocks make rocks/cwrap-scm-1.rockspec
 
 # install rock paths
-cd ../../luarock_modules/paths
+cd ../paths
 sudo luarocks make rocks/paths-scm-1.rockspec
-
-# install rock torch7
-cd ../../luarock_modules/torch7
-sudo luarocks make rocks/torch-scm-1.rockspec
 
 # generate lua wrappers
 # these wrappers need to be modified to compile with Luau after generation
-cd ../../torch7
-mkdir generated
+# you need to be in the torch7 directory otherwise torchcwrap.lua can not be found
+cd ../..
 lua ./TensorMath.lua generated/TensorMath.c
 lua ./random.lua generated/random.c
 

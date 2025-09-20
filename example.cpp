@@ -2,15 +2,20 @@
 #include <fstream>
 #include <sstream>
 
+// luau includes
 #include "luacode.h"
 #include "lua.h"
 #include "lualib.h"
+
+// torch7 includes
 #include "torch7/torch7.h"
-#include "torch7/lib/TH/TH.h"
-#include "torch7/lib/luaT/luaT.h"
 #ifdef LUAU_TORCH7_NOISE
 #include "torch7_noise/torch7_noise.h"
 #endif
+
+// torch7 internals for custom C functions
+#include "torch7/lib/TH/TH.h"
+#include "torch7/lib/luaT/luaT.h"
 
 std::string load_file_to_string(std::string& filename)
 {

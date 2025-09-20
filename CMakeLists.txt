@@ -73,7 +73,7 @@ set(torch7_src
     ./torch7/utils.c
     ./torch7/generated/random.c
     ./torch7/generated/TensorMath.c
-    ./torch_lua.c
+    ./torch7/generated/torch_lua.c
 )
 
 add_library(torch7 ${torch7_src})
