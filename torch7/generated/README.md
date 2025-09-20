@@ -1,5 +1,5 @@
 Torch7 uses the [cwrap](https://github.com/torch/cwrap) and [paths](https://github.com/torch/paths) luarocks to generate C code.
-This directory contains the generated code, so you dont need to set up a lua env to compile Torch7.
+This directory contains the generated code, as it needs to be modified after generation to compile with Luau.
 
  - `lua_cwrap_to_c.sh` Script documenting lua code generation steps
  - `random.c` Generated code from [torch7/random.lua](../random.lua)
