@@ -1,7 +1,11 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.13)
 project(LuauTorch7 C)
 
-option(BUILD_LUAU_TORCH7_EXAMPLE "Build standalone example exe" ON)
+option(LUAU_TORCH7_EXAMPLE "Build standalone example exe"        ON)
+option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" ON)
+
+message("LUAU_TORCH7_EXAMPLE = ${LUAU_TORCH7_EXAMPLE}")
+message("LUAU_TORCH7_NOISE   = ${LUAU_TORCH7_NOISE}")
 
 # Luau
 
@@ -153,9 +157,40 @@ else()
     message(FATAL_ERROR "Torch7 mmap: error")
 endif()
 
+# Torch7 FastNoise2
+
+if (LUAU_TORCH7_NOISE)
+
+    enable_language(CXX)
+
+    set(FASTNOISE2_TOOLS     ON  CACHE BOOL "Build \"Node Editor\" executable"                                                                          FORCE)
+    set(FASTNOISE2_TESTS     OFF CACHE BOOL "Build tests"                                                                                               FORCE)
+    set(FASTNOISE2_UTILITY   OFF CACHE BOOL "Build utility tools"                                                                                       FORCE)
+    set(FASTNOISE2_STRICT_FP OFF CACHE BOOL "Enable strict floating point calculations to ensure output from different SIMD feature sets match EXACTLY" FORCE)
+
+    add_subdirectory(FastNoise2)
+
+    target_sources(torch7 PRIVATE
+        ./torch7_noise/torch7_noise.cpp
+    )
+
+    target_include_directories(torch7 PRIVATE
+        ./FastNoise2/include/FastNoise
+    )
+
+    target_link_libraries(torch7 PRIVATE
+        FastNoise
+    )
+
+    target_compile_definitions(torch7 PUBLIC 
+        LUAU_TORCH7_NOISE
+    )
+
+endif()
+
 # main exe
 
-if (BUILD_LUAU_TORCH7_EXAMPLE)
+if (LUAU_TORCH7_EXAMPLE)
 
     enable_language(CXX)
 

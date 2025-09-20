@@ -8,6 +8,9 @@
 #include "torch7/torch7.h"
 #include "torch7/lib/TH/TH.h"
 #include "torch7/lib/luaT/luaT.h"
+#ifdef LUAU_TORCH7_NOISE
+#include "torch7_noise/torch7_noise.h"
+#endif
 
 std::string load_file_to_string(std::string& filename)
 {
@@ -121,6 +124,9 @@ int main(int argc, char** argv)
 
     // load Torch7 C library
     luaopen_libtorch(L);
+    #ifdef LUAU_TORCH7_NOISE
+    luaopen_libtorch_noise(L);
+    #endif
 
     // load Torch7 lua init code, this modifies global state
     {

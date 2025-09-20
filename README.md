@@ -28,9 +28,14 @@ Removed Torch7 features:
 Modified Torch7 features:
  - Default tensor type is `torch.FloatTensor`
 
+Added Torch7 features:
+ - These features can be turned on or off by setting the cmake option `LUAU_TORCH7_FASTNOISE`. You can check for `LUAU_TORCH7_FASTNOISE` define in C and `torch.hasNoise` in Lua to check if the noise functions are avaliable.
+ - `[res] torch.simplex2D([res,] scale, xstart, ystart, xsize, ysize, seed)`, simplex noise generation, returns a 2D `torch.FloatTensor`
+ - `[res] torch.node2D([res,] encoded node tree string, xstart, ystart, xsize, ysize, seed)`, noise generation based on FastNoise2 Node Editor encoded node tree string, returns a 2D `torch.FloatTensor`
+
 ## Example
 
-Use the `BUILD_LUAU_TORCH7_EXAMPLE` CMake option to compile `example.cpp`, and pass `example.lua` as first argument to the exe.
+Use the `LUAU_TORCH7_EXAMPLE` CMake option to compile `example.cpp`, and pass `example.lua` as first argument to the exe.
 
 Output:
 ```

@@ -2,3 +2,7 @@
 	path = luau
 	url = https://github.com/luau-lang/luau.git
 	branch = master
+[submodule "FastNoise2"]
+	path = FastNoise2
+	url = https://github.com/Auburn/FastNoise2.git
+	branch = NewFastSIMD
