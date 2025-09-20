@@ -65,9 +65,9 @@ static int torch_Storage_(new)(lua_State *L)
     storage->view = src;
     THStorage_(retain)(storage->view);
   }
-#ifdef LUAU_DISABLED
   else if(lua_type(L, index + 1) == LUA_TNUMBER)
   {
+#ifdef LUAU_DISABLED
     ptrdiff_t size = luaL_optinteger(L, index, 0);
     real *ptr = (real *)luaL_optinteger(L, index + 1, 0);
     if (allocator)
@@ -75,8 +75,10 @@ static int torch_Storage_(new)(lua_State *L)
     else
       storage = THStorage_(newWithData)(ptr, size);
     storage->flag = TH_STORAGE_REFCOUNTED;
-  }
+#else
+    luaL_error(L, "lua pointers not supported");
 #endif
+  }
   else
   {
     ptrdiff_t size = luaL_optinteger(L, index, 0);

@@ -20,9 +20,9 @@ Removed Torch7 features:
    - TestSuite
  - Partial features
    - [torch_isatty](torch7/utils.c#L67), no tty in Luau
-   - [torch_Storage_(new)](torch7/generic/Storage.c#L69), allocating storage from Lua with a pointer + size
-   - [luaT_pushpointer](torch7/lib/luaT/luaT.c#L1027), pushing pointer to stack
-   - [luaT_lua_pointer](torch7/lib/luaT/luaT.c#L1042), getting pointer of lua object
+   - [torch_Storage_(new)](torch7/generic/Storage.c#L68), allocating storage from Lua with a pointer + size
+   - [luaT_pushpointer](torch7/lib/luaT/luaT.c#L1029), pushing pointer to stack
+   - [luaT_lua_pointer](torch7/lib/luaT/luaT.c#L1044), getting pointer of lua object
    - [luaT_lua_pushudata](torch7/lib/luaT/luaT.c#L946), return userdata from a C pointer
 
 Modified Torch7 features:
