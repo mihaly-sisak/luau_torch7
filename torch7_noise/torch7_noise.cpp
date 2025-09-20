@@ -86,8 +86,8 @@ static const struct luaL_Reg torch_noise__ [] = {
 int luaopen_libtorch_noise(lua_State *L)
 {
     // torch.FloatTensor
-    luaT_pushmetatable(L, "torch.FloatTensor");
-    assert(lua_istable(L, -1) == 1);
+    int ok = luaT_pushmetatable(L, "torch.FloatTensor");
+    assert(ok == 1);
     luaT_setfuncs(L, torch_noise__, 0);
     lua_pop(L, -1);
     // torch
