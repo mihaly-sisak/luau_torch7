@@ -47,13 +47,13 @@ set(torch7_src
     ./torch7/lib/TH/THAllocator.c
     ./torch7/lib/TH/THAtomic.c
     ./torch7/lib/TH/THBlas.c
-    ./torch7/lib/TH/THDiskFile.c
+#    ./torch7/lib/TH/THDiskFile.c
     ./torch7/lib/TH/THFile.c
     ./torch7/lib/TH/THGeneral.c
     ./torch7/lib/TH/THHalf.c
     ./torch7/lib/TH/THLapack.c
     ./torch7/lib/TH/THLogAdd.c
-    ./torch7/lib/TH/THMemoryFile.c
+#    ./torch7/lib/TH/THMemoryFile.c
     ./torch7/lib/TH/THRandom.c
     ./torch7/lib/TH/THSize.c
     ./torch7/lib/TH/THStorage.c
