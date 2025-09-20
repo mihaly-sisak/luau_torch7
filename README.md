@@ -37,7 +37,7 @@ Added Torch7 features:
 
 Use the `LUAU_TORCH7_EXAMPLE` CMake option to compile `example.cpp`, and pass `example.lua` as first argument to the exe.
 
-Output:
+Output with `LUAU_TORCH7_NOISE` enabled:
 ```
  1  2
  3  4
@@ -61,10 +61,18 @@ Output:
  2  2  2
 [torch.FloatTensor of size 3x3]
 
-a
-Runtime error: [string "example.lua"]:14: a
-[string "example.lua"]:14
-[string "example.lua"]:17
+noise:
+    took 0.1470989510016807 seconds
+    min = -0.999998927116394, max = 0.999998927116394
+    num of indexes = 281666
+tracetest3
+tracetest2
+tracetest1
+Runtime error: [string "example.lua"]:34: example error
+[string "example.lua"]:34
+[string "example.lua"]:39
+[string "example.lua"]:44
+[string "example.lua"]:47
 ```
 
 ## How to build
