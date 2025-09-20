@@ -23,7 +23,7 @@ Removed Torch7 features:
    - [torch_Storage_(new)](torch7/generic/Storage.c#L69), allocating storage from Lua with a pointer + size
    - [luaT_pushpointer](torch7/lib/luaT/luaT.c#L1027), pushing pointer to stack
    - [luaT_lua_pointer](torch7/lib/luaT/luaT.c#L1042), getting pointer of lua object
-   - [luaT_lua_pushudata](torch7/lib/luaT/luaT.c#L946), return a userdata from a C pointer
+   - [luaT_lua_pushudata](torch7/lib/luaT/luaT.c#L946), return userdata from a C pointer
 
 Modified Torch7 features:
  - Default tensor type is `torch.FloatTensor`
