@@ -29,9 +29,7 @@ Modified Torch7 features:
  - Default tensor type is `torch.FloatTensor`
 
 Added Torch7 features:
- - These features can be turned on or off by setting the cmake option `LUAU_TORCH7_NOISE`. You can check for `LUAU_TORCH7_NOISE` define in C and `torch.hasNoise` in Lua to see if the noise functions are avaliable.
- - `[res] torch.simplex2D([res,] scale, xstart, ystart, xsize, ysize, seed)`, simplex noise generation, returns a 2D `torch.FloatTensor`
- - `[res] torch.node2D([res,] encoded node tree string, xstart, ystart, xsize, ysize, seed)`, noise generation based on FastNoise2 Node Editor encoded node tree string, returns a 2D `torch.FloatTensor`
+ - Optional [noise](torch7_noise/noise.md) library
 
 ## Example
 
@@ -76,7 +74,20 @@ Runtime error: [string "example.lua"]:33: example error
 [string "example.lua"]:46
 ```
 
-## How to build
+## Documentation
 
- - Check out the luau submodule
- - Build and run with `build.sh`
+__Torch__ is the main package in Torch7 where data
+structures for multi-dimensional tensors and mathematical operations
+over these are defined.
+
+ - Tensor Library
+   - [Tensor](torch7/doc/tensor.md) defines the _all powerful_ tensor object that provides multi-dimensional numerical arrays with type templating.
+   - [Mathematical operations](torch7/doc/maths.md) that are defined for the tensor object types.
+   - [Storage](torch7/doc/storage.md) defines a simple storage interface that controls the underlying storage for any tensor object.
+ - Useful Utilities
+   - [Timer](torch7/doc/timer.md) provides functionality for _measuring time_.
+   - [Random](torch7/doc/random.md) defines a random number generator package with various distributions.
+   - [Utility](torch7/doc/utility.md) functions are provided for easy handling of torch tensor types and class inheritance.
+ - Noise Library
+   - [Noise](torch7_noise/noise.md) optional library
+

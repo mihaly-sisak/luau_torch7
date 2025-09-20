@@ -123,9 +123,11 @@ int main(int argc, char** argv)
     luaL_openlibs(L);
 
     // load Torch7 C library
-    luaopen_libtorch(L);
+    lua_pushcfunction(L, luaopen_libtorch, "luaopen_libtorch");
+    lua_call(L, 0, 0);
     #ifdef LUAU_TORCH7_NOISE
-    luaopen_libtorch_noise(L);
+    lua_pushcfunction(L, luaopen_libtorch_noise, "luaopen_libtorch_noise");
+    lua_call(L, 0, 0);
     #endif
 
     // load Torch7 lua init code, this modifies global state
