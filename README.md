@@ -29,7 +29,7 @@ Modified Torch7 features:
  - Default tensor type is `torch.FloatTensor`
 
 Added Torch7 features:
- - Optional [noise](torch7_noise/noise.md) library
+ - Coherent [noise](torch7_noise/noise.md) optional library
 
 ## Example
 
@@ -64,6 +64,7 @@ noise:
     took 0.1268852550019801 seconds
     min = -0.999998927116394, max = 0.999998927116394
     num of indexes = 281666
+
 tracetest3
 tracetest2
 tracetest1
@@ -88,6 +89,5 @@ over these are defined.
    - [Timer](torch7/doc/timer.md) provides functionality for _measuring time_.
    - [Random](torch7/doc/random.md) defines a random number generator package with various distributions.
    - [Utility](torch7/doc/utility.md) functions are provided for easy handling of torch tensor types and class inheritance.
- - Noise Library
-   - [Noise](torch7_noise/noise.md) optional library
+   - [Noise](torch7_noise/noise.md) optional coherent noise library
 

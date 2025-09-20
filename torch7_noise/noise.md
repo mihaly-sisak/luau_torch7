@@ -5,7 +5,7 @@ Luau_Torch7 provides functions for coherent noise generation, based on the [Fast
 These features can be turned on or off by setting the cmake option `LUAU_TORCH7_NOISE`. You can check for `LUAU_TORCH7_NOISE` define in C and `torch.hasNoise` in Lua to see if the noise functions are avaliable.
 
 By default, all operations allocate a new `FloatTensor` to return the result.
-However, all functions also support passing the target `FloatTensor`(s) as the first argument(s), in which case the target `FloatTensor`(s) will be resized accordingly and filled with result.
+However, all functions also support passing the target `FloatTensor` as the first argument, in which case the target `FloatTensor` will be resized accordingly and filled with result.
 This property is especially useful when one wants have tight control over when memory is allocated.
 
 The *Torch* package adopts the same concept, so that calling a function directly on the `FloatTensor` itself using an object-oriented syntax is equivalent to passing the `FloatTensor` as the optional resulting `FloatTensor`.
