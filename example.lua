@@ -22,11 +22,10 @@ if (torch.hasNoise) then
     local time_stop = os.clock()
 
     print("noise:")
+    print("    generated and filtered " .. size*size .. " values")
     print("    took " .. time_stop-time_start .. " seconds")
     print("    min = " .. torch.min(n) .. ", max = " .. torch.max(n))
-    if (s) then
-        print("    num of indexes = " .. s:size(1))
-    end
+    print("    num of indexes = " .. s:size(1))
 end
 
 local tracetest1 = function()

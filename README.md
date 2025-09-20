@@ -62,17 +62,18 @@ Output with `LUAU_TORCH7_NOISE` enabled:
 [torch.FloatTensor of size 3x3]
 
 noise:
-    took 0.1470989510016807 seconds
+    generated and filtered 5244100 values
+    took 0.1268852550019801 seconds
     min = -0.999998927116394, max = 0.999998927116394
     num of indexes = 281666
 tracetest3
 tracetest2
 tracetest1
-Runtime error: [string "example.lua"]:34: example error
-[string "example.lua"]:34
-[string "example.lua"]:39
-[string "example.lua"]:44
-[string "example.lua"]:47
+Runtime error: [string "example.lua"]:33: example error
+[string "example.lua"]:33
+[string "example.lua"]:38
+[string "example.lua"]:43
+[string "example.lua"]:46
 ```
 
 ## How to build
