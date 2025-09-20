@@ -2,6 +2,7 @@
 #include "THAtomic.h"
 
 /* stuff for mapped files */
+#ifdef LUAU_DISABLED
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -12,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#endif
 #endif
 /* end of stuff for mapped files */
 
@@ -33,7 +35,7 @@ THAllocator THDefaultAllocator = {
   &THDefaultAllocator_free
 };
 
-#if defined(_WIN32) || defined(HAVE_MMAP)
+#if (defined(_WIN32) || defined(HAVE_MMAP)) && defined(LUAU_DISABLED)
 
 struct THMapAllocatorContext_ {
   char *filename; /* file name */
@@ -108,7 +110,6 @@ static void *_map_alloc(void* ctx_, ptrdiff_t size)
   THMapAllocatorContext *ctx = ctx_;
   void *data = NULL;
 
-#ifdef LUAU_DISABLED
 #ifdef _WIN32
   {
     HANDLE hfile;
@@ -319,7 +320,6 @@ static void *_map_alloc(void* ctx_, ptrdiff_t size)
     }
   }
 #endif
-#endif
 
   return data;
 }
@@ -336,7 +336,6 @@ static void *THMapAllocator_realloc(void* ctx, void* ptr, ptrdiff_t size) {
 static void THMapAllocator_free(void* ctx_, void* data) {
   THMapAllocatorContext *ctx = ctx_;
 
-#ifdef LUAU_DISABLED
 #ifdef _WIN32
   if(UnmapViewOfFile(data) == 0)
     THError("could not unmap the shared memory file");
@@ -362,7 +361,6 @@ static void THMapAllocator_free(void* ctx_, void* data) {
     }
   }
 #endif /* _WIN32 */
-#endif
 
   THMapAllocatorContext_free(ctx);
 }
@@ -400,7 +398,7 @@ static void THMapAllocator_free(void* ctx, void* data) {
 
 #endif
 
-#if (defined(_WIN32) || defined(HAVE_MMAP)) && defined(TH_ATOMIC_IPC_REFCOUNT)
+#if (defined(_WIN32) || defined(HAVE_MMAP)) && defined(TH_ATOMIC_IPC_REFCOUNT) && defined(LUAU_DISABLED)
 
 static void * THRefcountedMapAllocator_alloc(void *_ctx, ptrdiff_t size) {
   THMapAllocatorContext *ctx = _ctx;
