@@ -108,6 +108,7 @@ static void *_map_alloc(void* ctx_, ptrdiff_t size)
   THMapAllocatorContext *ctx = ctx_;
   void *data = NULL;
 
+#ifdef LUAU_DISABLED
 #ifdef _WIN32
   {
     HANDLE hfile;
@@ -318,6 +319,7 @@ static void *_map_alloc(void* ctx_, ptrdiff_t size)
     }
   }
 #endif
+#endif
 
   return data;
 }
@@ -334,6 +336,7 @@ static void *THMapAllocator_realloc(void* ctx, void* ptr, ptrdiff_t size) {
 static void THMapAllocator_free(void* ctx_, void* data) {
   THMapAllocatorContext *ctx = ctx_;
 
+#ifdef LUAU_DISABLED
 #ifdef _WIN32
   if(UnmapViewOfFile(data) == 0)
     THError("could not unmap the shared memory file");
@@ -359,6 +362,7 @@ static void THMapAllocator_free(void* ctx_, void* data) {
     }
   }
 #endif /* _WIN32 */
+#endif
 
   THMapAllocatorContext_free(ctx);
 }
@@ -372,6 +376,12 @@ THMapAllocatorContext *THMapAllocatorContext_new(const char *filename, int flags
 
 void THMapAllocatorContext_free(THMapAllocatorContext *ctx) {
   THError("file mapping not supported on your system");
+}
+
+ptrdiff_t THMapAllocatorContext_size(THMapAllocatorContext *ctx)
+{
+  THError("file mapping not supported on your system");
+  return 0;
 }
 
 static void *THMapAllocator_alloc(void* ctx_, ptrdiff_t size) {

@@ -145,18 +145,6 @@ endif()
 #target_compile_definitions(torch7 PRIVATE USE_GCC_ATOMICS)
 #target_compile_definitions(torch7 PRIVATE USE_PTHREAD_ATOMICS)
 
-# Torch7 mmap
-
-if (WIN32 OR MINGW)
-    target_compile_definitions(torch7 PRIVATE _WIN32)
-    message("Torch7 mmap: Win32")
-elseif (UNIX)
-    target_compile_definitions(torch7 PRIVATE HAVE_MMAP)
-    message("Torch7 mmap: mmap")
-else()
-    message(FATAL_ERROR "Torch7 mmap: error")
-endif()
-
 # Torch7 FastNoise2
 
 if (LUAU_TORCH7_NOISE)
