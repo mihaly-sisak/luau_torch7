@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.14)
 project(LuauTorch7 C)
+include(FetchContent)
 
 option(LUAU_TORCH7_EXAMPLE "Build standalone example exe"        ON)
 option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" ON)
@@ -9,6 +10,12 @@ message("LUAU_TORCH7_NOISE   = ${LUAU_TORCH7_NOISE}")
 
 # Luau
 
+FetchContent_Declare(
+    luau
+    GIT_REPOSITORY https://github.com/luau-lang/luau.git
+    GIT_TAG        origin/master
+)
+
 set(LUAU_BUILD_CLI   OFF CACHE BOOL "Build CLI"                      FORCE)
 set(LUAU_BUILD_TESTS OFF CACHE BOOL "Build tests"                    FORCE)
 set(LUAU_BUILD_WEB   OFF CACHE BOOL "Build Web module"               FORCE)
@@ -16,7 +23,7 @@ set(LUAU_WERROR      OFF CACHE BOOL "Warnings as errors"             FORCE)
 set(LUAU_STATIC_CRT  OFF CACHE BOOL "Link with the static CRT (/MT)" FORCE)
 set(LUAU_EXTERN_C    ON  CACHE BOOL "Use extern C for all APIs"      FORCE)
 
-add_subdirectory(luau)
+FetchContent_MakeAvailable(luau)
 
 # Torch7
 
@@ -85,7 +92,7 @@ target_include_directories(torch7 PRIVATE
     ./torch7/lib/luaT
     ./torch7/lib/TH
     ./torch7
-    ./luau/VM/include
+    ${luau_SOURCE_DIR}/VM/include
 )
 
 target_link_libraries(torch7 PRIVATE
@@ -151,19 +158,25 @@ if (LUAU_TORCH7_NOISE)
 
     enable_language(CXX)
 
+    FetchContent_Declare(
+        FastNoise2
+        GIT_REPOSITORY https://github.com/Auburn/FastNoise2.git
+        GIT_TAG        origin/NewFastSIMD
+    )
+
     set(FASTNOISE2_TOOLS     ON  CACHE BOOL "Build \"Node Editor\" executable"                                                                          FORCE)
     set(FASTNOISE2_TESTS     OFF CACHE BOOL "Build tests"                                                                                               FORCE)
     set(FASTNOISE2_UTILITY   OFF CACHE BOOL "Build utility tools"                                                                                       FORCE)
     set(FASTNOISE2_STRICT_FP OFF CACHE BOOL "Enable strict floating point calculations to ensure output from different SIMD feature sets match EXACTLY" FORCE)
 
-    add_subdirectory(FastNoise2)
+    FetchContent_MakeAvailable(FastNoise2)
 
     target_sources(torch7 PRIVATE
         ./torch7_noise/torch7_noise.cpp
     )
 
     target_include_directories(torch7 PRIVATE
-        ./FastNoise2/include/FastNoise
+        ${FastNoise2_SOURCE_DIR}/include/FastNoise
     )
 
     target_link_libraries(torch7 PRIVATE
@@ -191,8 +204,8 @@ if (LUAU_TORCH7_EXAMPLE)
     )
 
     target_include_directories(luau_example PRIVATE
-        ./luau/VM/include
-        ./luau/Compiler/include
+        ${luau_SOURCE_DIR}/VM/include
+        ${luau_SOURCE_DIR}/Compiler/include
     )
 
 endif()
