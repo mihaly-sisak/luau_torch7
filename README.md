@@ -80,17 +80,17 @@ Runtime error: [string "example.lua"]:33: example error
 
 Massaged Tester and TestsSuite to work with Luau. Run `build_n_test.sh` to execute `luau_test.lua` and `example.lua`.
 
- - `test/longSize.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
- - `torch7/test/test_aliasMultinomial.lua` : Passes.
- - `torch7/test/test_half.lua` : Passes.
- - `torch7/test/test_Multinomial.lua` : Uses the `FFInterface` `LongTensor:data()` and `LongTensor:apply()`, does not work.
- - `torch7/test/test_qr.lua` : Passes.
- - `torch7/test/test_sharedmem.lua` : Tests `torch.TYPEStorage(filename [, shared [, size [, sharedMem]]])`, does not work.
- - `torch7/test/test_Tester.lua` : Passes.
- - `torch7/test/test_timer.lua` : Passes.
- - `torch7/test/test_writeObject.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
- - `torch7/test/test.lua` : Passes, except a few cases testing the `File`, `torch.class()` or global state setting features.
- - `torch7/test/timeSort.lua` : Test measuring `torch.sort` speed, does not work.
+ - `longSize.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
+ - `test_aliasMultinomial.lua` : Passes.
+ - `test_half.lua` : Passes.
+ - `test_Multinomial.lua` : Uses the `FFInterface` `LongTensor:data()` and `LongTensor:apply()`, does not work.
+ - `test_qr.lua` : Passes.
+ - `test_sharedmem.lua` : Tests `torch.TYPEStorage(filename [, shared [, size [, sharedMem]]])`, does not work.
+ - `test_Tester.lua` : Passes.
+ - `test_timer.lua` : Passes.
+ - `test_writeObject.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
+ - `test.lua` : Passes, except a few cases testing the `File`, `torch.class()` or global state setting features.
+ - `timeSort.lua` : Test measuring `torch.sort` speed, does not work.
 
 ## Documentation
 
