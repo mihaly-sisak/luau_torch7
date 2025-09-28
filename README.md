@@ -78,7 +78,9 @@ Runtime error: [string "example.lua"]:33: example error
 
 ## Tests
 
-Massaged Tester and TestsSuite to work with Luau. Run `build_n_test.sh` to execute `luau_test.lua` and `example.lua`.
+Massaged Tester and TestsSuite to work with Luau. 
+
+Run `build_n_test.sh` to execute `luau_test.lua` and `example.lua`.
 
  - `longSize.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
  - `test_aliasMultinomial.lua` : Passes.
