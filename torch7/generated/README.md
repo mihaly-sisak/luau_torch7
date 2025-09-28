@@ -2,6 +2,7 @@ Torch7 uses the [cwrap](https://github.com/torch/cwrap) and [paths](https://gith
 This directory contains the generated code, as it needs to be modified after generation to compile with Luau.
 
  - `lua_cwrap_to_c.sh` Script documenting lua code generation steps
+ - `torch7/generated/luau_test.lua` Amalgam of the `torch7/test` lua scripts, modified to make sense with Luau
  - `random.c` Generated code from [torch7/random.lua](../random.lua), modified to work with Luau
  - `TensorMath.c` Generated code from [torch7/TensorMath.lua](../TensorMath.lua), modified to work with Luau
  - `torch.lua` Merged Torch7 lua initialization code from [torch7/init.lua](../init.lua), commented out parts that do not work with Luau, copied in file contents where `require` would have been used
