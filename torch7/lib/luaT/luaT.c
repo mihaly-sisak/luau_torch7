@@ -1025,9 +1025,9 @@ int luaT_lua_isequal(lua_State *L)
   return 1;
 }
 
-#ifdef LUAU_DISABLED
 static void luaT_pushpointer(lua_State *L, const void *ptr)
 {
+#ifdef LUAU_DISABLED
 #if LUA_VERSION_NUM >= 503
   // this assumes that lua_Integer is a ptrdiff_t
   if (sizeof(void *) > sizeof(lua_Integer))
@@ -1039,10 +1039,30 @@ static void luaT_pushpointer(lua_State *L, const void *ptr)
     luaL_error(L, "Pointer value can't be represented as a Lua number (an overflow would occur)");
   lua_pushnumber(L, (uintptr_t)(ptr));
 #endif
+#else
+  // https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript/52171480#52171480
+  unsigned seed = 0x3915a5afu;
+  unsigned h1   = 0xdeadbeefu ^ seed;
+  unsigned h2   = 0x41c6ce57u ^ seed;
+  for (int i = 0; i < 8; i++){
+    unsigned ch = (((long long unsigned)ptr) >> (i*8)) & 0xFF;
+    h1 = (h1 ^ ch) * 2654435761u;
+    h2 = (h2 ^ ch) * 1597334677u;
+  }
+  h1  = (h1 ^ (h1 >> 16)) * 2246822507u;
+  h1 ^= (h2 ^ (h2 >> 13)) * 3266489909u;
+  h2  = (h2 ^ (h2 >> 16)) * 2246822507u;
+  h2 ^= (h1 ^ (h1 >> 13)) * 3266489909u;
+  long long unsigned lh1 = h1;
+  long long unsigned lh2 = h2;
+  long long unsigned ret = 4294967296llu * (2097151llu & lh2) + (lh1);
+  lua_pushnumber(L, ret);
+#endif
 }
 
 int luaT_lua_pointer(lua_State *L)
 {
+#ifdef LUAU_DISABLED
   if(lua_type(L, 1) == 10) /* luajit cdata */
   {
     /* we want the pointer holded by cdata */
@@ -1057,7 +1077,9 @@ int luaT_lua_pointer(lua_State *L)
     luaT_pushpointer(L, ptr[4]);
     return 1;
   }
-  else if(lua_isuserdata(L, 1))
+  else 
+#endif
+  if(lua_isuserdata(L, 1))
   {
     void **ptr;
     luaL_argcheck(L, luaT_typename(L, 1), 1, "Torch object expected");
@@ -1078,11 +1100,14 @@ int luaT_lua_pointer(lua_State *L)
     return 1;
   }
   else
+#ifdef LUAU_DISABLED
     luaL_error(L, "Torch object, table, thread, cdata or function expected");
+#else
+    luaL_error(L, "Torch object, table, thread or function expected");
+#endif
 
   return 0;
 }
-#endif
 
 int luaT_lua_setenv(lua_State *L)
 {

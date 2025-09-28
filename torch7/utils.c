@@ -244,7 +244,7 @@ static const struct luaL_Reg torch_utils__ [] = {
   {"metatype", luaT_lua_metatype},
 //  {"pushudata", luaT_lua_pushudata},
   {"version", luaT_lua_version},
-//  {"pointer", luaT_lua_pointer},
+  {"pointer", luaT_lua_pointer},
   {"setheaptracking", torch_setheaptracking},
   {"updateerrorhandlers", torch_updateerrorhandlers},
   {NULL, NULL}

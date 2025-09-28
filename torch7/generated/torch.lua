@@ -9,6 +9,10 @@ if not table.unpack then
    table.unpack = unpack
 end
 
+-- Lua 5.2 compatibility
+local unpack = unpack or table.unpack
+local loadstring = loadstring or load
+
 --require "paths"
 --paths.require "libtorch"
 
@@ -54,58 +58,58 @@ end
 --   dofile(torch.packageLuaPath(package) .. '/' .. file)
 --end
 
-function torch.class(...)
-   local tname, parenttname, module
-   if select('#', ...) == 3
-      and type(select(1, ...)) == 'string'
-      and type(select(2, ...)) == 'string'
-      and type(select(3, ...)) == 'table'
-   then
-      tname = select(1, ...)
-      parenttname = select(2, ...)
-      module = select(3, ...)
-   elseif select('#', ...) == 2
-      and type(select(1, ...)) == 'string'
-      and type(select(2, ...)) == 'string'
-   then
-      tname = select(1, ...)
-      parenttname = select(2, ...)
-   elseif select('#', ...) == 2
-      and type(select(1, ...)) == 'string'
-      and type(select(2, ...)) == 'table'
-   then
-      tname = select(1, ...)
-      module = select(2, ...)
-   elseif select('#', ...) == 1
-      and type(select(1, ...)) == 'string'
-   then
-      tname = select(1, ...)
-   else
-      error('<class name> [<parent class name>] [<module table>] expected')
-   end
-
-   local function constructor(...)
-      local self = {}
-      torch.setmetatable(self, tname)
-      if self.__init then
-         self:__init(...)
-      end
-      return self
-   end
-
-   local function factory()
-      local self = {}
-      torch.setmetatable(self, tname)
-      return self
-   end
-
-   local mt = torch.newmetatable(tname, parenttname, constructor, nil, factory, module)
-   local mpt
-   if parenttname then
-      mpt = torch.getmetatable(parenttname)
-   end
-   return mt, mpt
-end
+--function torch.class(...)
+--   local tname, parenttname, module
+--   if select('#', ...) == 3
+--      and type(select(1, ...)) == 'string'
+--      and type(select(2, ...)) == 'string'
+--      and type(select(3, ...)) == 'table'
+--   then
+--      tname = select(1, ...)
+--      parenttname = select(2, ...)
+--      module = select(3, ...)
+--   elseif select('#', ...) == 2
+--      and type(select(1, ...)) == 'string'
+--      and type(select(2, ...)) == 'string'
+--   then
+--      tname = select(1, ...)
+--      parenttname = select(2, ...)
+--   elseif select('#', ...) == 2
+--      and type(select(1, ...)) == 'string'
+--      and type(select(2, ...)) == 'table'
+--   then
+--      tname = select(1, ...)
+--      module = select(2, ...)
+--   elseif select('#', ...) == 1
+--      and type(select(1, ...)) == 'string'
+--   then
+--      tname = select(1, ...)
+--   else
+--      error('<class name> [<parent class name>] [<module table>] expected')
+--   end
+--
+--   local function constructor(...)
+--      local self = {}
+--      torch.setmetatable(self, tname)
+--      if self.__init then
+--         self:__init(...)
+--      end
+--      return self
+--   end
+--
+--   local function factory()
+--      local self = {}
+--      torch.setmetatable(self, tname)
+--      return self
+--   end
+--
+--   local mt = torch.newmetatable(tname, parenttname, constructor, nil, factory, module)
+--   local mpt
+--   if parenttname then
+--      mpt = torch.getmetatable(parenttname)
+--   end
+--   return mt, mpt
+--end
 
 function torch.setdefaulttensortype(typename)
    assert(type(typename) == 'string', 'string expected')
@@ -150,7 +154,8 @@ function torch.isTypeOf(obj, typeSpec)
    return false
 end
 
-torch.setdefaulttensortype('torch.FloatTensor')
+--torch.setdefaulttensortype('torch.FloatTensor')
+torch.setdefaulttensortype('torch.DoubleTensor')
 
 ------------------------- require('torch.Tensor')
 
@@ -734,6 +739,35 @@ end
 ------------------------- require('torch.Tester')
 ------------------------- require('torch.TestSuite')
 ------------------------- require('torch.test')
+
+-- workarounds for non-existant functions
+function torch.HalfTensor:__sub(other)
+   return (self:real() - other:real()):half()
+end
+
+function torch.HalfTensor:mean(dim)
+   return self:real():mean(dim):half()
+end
+
+function torch.HalfTensor:abs()
+   return self:real():abs():half()
+end
+
+function torch.HalfTensor:max()
+   return self:real():max()
+end
+
+function torch.HalfTensor:add(a, b)
+   return (self:real():add(a, b:real())):half()
+end
+
+function torch.HalfTensor:reshape(a, b)
+   return (self:real():reshape(a, b)):half()
+end
+
+function torch.HalfTensor:fill(a)
+   return self:real():fill(a):half()
+end
 
 function torch.totable(obj)
    if torch.isTensor(obj) or torch.isStorage(obj) then

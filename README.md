@@ -5,7 +5,6 @@ Luau-compatible fork of Torch7.
 Some features needed to be removed, for the following reasons:
  - Luau does not support files to protect user filesystem
  - Luau does not have `FFI` library
- - Luau does not have `lua_topointer` function
  - Lua `number` max representable integer is 2^53, this can hold 32 bit pointers but can not hold 64 bit ones
 
 Removed Torch7 features:
@@ -19,15 +18,16 @@ Removed Torch7 features:
    - Tester
    - TestSuite
  - Partial features
-   - [torch_isatty](torch7/utils.c#L67), no tty in Luau
-   - [torch_Storage_(new)](torch7/generic/Storage.c#L68), allocating storage from Lua with a pointer + size
-   - [torch_Storage_(new)](torch7/lib/TH/THAllocator.c#370), allocating storage from memory mapped file
-   - [luaT_pushpointer](torch7/lib/luaT/luaT.c#L1029), pushing pointer to stack
-   - [luaT_lua_pointer](torch7/lib/luaT/luaT.c#L1044), getting pointer of lua object
-   - [luaT_lua_pushudata](torch7/lib/luaT/luaT.c#L946), return userdata from a C pointer
+   - `torch.isatty()`, no tty in Luau
+   - `torch.TYPEStorage(size, ptr)`, allocating storage from Lua with a pointer + size
+   - `torch.TYPEStorage(filename [, shared [, size [, sharedMem]]])`, allocating storage from memory mapped file
+   - `torch.class()`, modifies global state
+   - `torch.setheaptracking()`, modifies global state
+   - `torch.setdefaulttensortype()`, modifies global state
+   - Any other function modifying the global state
 
 Modified Torch7 features:
- - Default tensor type is `torch.FloatTensor`
+ - `torch.pointer()` returns hash of the pointer, only good for comparing equality
 
 Added Torch7 features:
  - Coherent [noise](torch7_noise/noise.md) optional library
@@ -75,6 +75,22 @@ Runtime error: [string "example.lua"]:33: example error
 [string "example.lua"]:43
 [string "example.lua"]:46
 ```
+
+## Tests
+
+Massaged Tester and TestsSuite to work with Luau. Run `build_n_test.sh` to execute `luau_test.lua` and `example.lua`.
+
+ - `test/longSize.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
+ - `torch7/test/test_aliasMultinomial.lua` : Passes.
+ - `torch7/test/test_half.lua` : Passes.
+ - `torch7/test/test_Multinomial.lua` : Uses the `FFInterface` `LongTensor:data()` and `LongTensor:apply()`, does not work.
+ - `torch7/test/test_qr.lua` : Passes.
+ - `torch7/test/test_sharedmem.lua` : Tests `torch.TYPEStorage(filename [, shared [, size [, sharedMem]]])`, does not work.
+ - `torch7/test/test_Tester.lua` : Passes.
+ - `torch7/test/test_timer.lua` : Passes.
+ - `torch7/test/test_writeObject.lua` : Tests `DiskFile` and `MemoryFile`, does not work.
+ - `torch7/test/test.lua` : Passes, except a few cases testing the `File`, `torch.class()` or global state setting features.
+ - `torch7/test/timeSort.lua` : Test measuring `torch.sort` speed, does not work.
 
 ## Documentation
 

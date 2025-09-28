@@ -1,5 +1,5 @@
-local x = torch.Tensor(2, 2):range(1,4)
-local y = torch.Tensor(2, 2):fill(1)
+local x = torch.FloatTensor(2, 2):range(1,4)
+local y = torch.FloatTensor(2, 2):fill(1)
 local z = x + y
 
 print(x)

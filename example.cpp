@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 // luau includes
 #include "luacode.h"
@@ -115,6 +117,20 @@ int c_tensor_modify(lua_State* L)
     return 1;
 }
 
+// needed for torch.Timer() test
+int luau_sleep(lua_State* L)
+{
+    int narg = lua_gettop(L);
+    if (narg != 1) 
+        luaL_error(L, "luau_sleep(sleep_sec : number) expected 1 argument");
+    int isnum = 0;
+    double sleep_sec = lua_tonumberx(L, -1, &isnum);
+    if (isnum == 0) luaL_error(L, "luau_sleep(sleep_sec : number) argument sleep_sec is not a number");
+    auto dur = std::chrono::duration<double, std::milli>(sleep_sec * 1000.0);
+    std::this_thread::sleep_for(dur);
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
     if (argc < 2)
@@ -146,6 +162,8 @@ int main(int argc, char** argv)
     lua_setglobal(L, "c_tensor_init");
     lua_pushcfunction(L, c_tensor_modify, "c_tensor_modify");
     lua_setglobal(L, "c_tensor_modify");
+    lua_pushcfunction(L, luau_sleep, "luau_sleep");
+    lua_setglobal(L, "luau_sleep");
 
     // lock global state
     luaL_sandbox(L);
