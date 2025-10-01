@@ -3,10 +3,15 @@ project(LuauTorch7 C)
 include(FetchContent)
 
 option(LUAU_TORCH7_EXAMPLE "Build standalone example exe"        ON)
-option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" ON)
+option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" OFF)
 
 message("LUAU_TORCH7_EXAMPLE = ${LUAU_TORCH7_EXAMPLE}")
 message("LUAU_TORCH7_NOISE   = ${LUAU_TORCH7_NOISE}")
+
+#add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
+
+#add_compile_options(-fsanitize=address)
+#add_link_options(-fsanitize=address)
 
 # Luau
 

@@ -35,7 +35,7 @@ static int torch_noise_simplex2D(lua_State *L)
     }
     auto fn = FastNoise::New<FastNoise::Simplex>();
     fn->SetScale(scale);
-    fn->GenUniformGrid2D(&res->storage->data[res->storageOffset], xstart, ystart, xsize, ysize, seed);
+    fn->GenUniformGrid2D(&res->storage->data[res->storageOffset], xstart, ystart, xsize, ysize, 1.0, 1.0, seed);
     luaT_pushudata(L, res, "torch.FloatTensor");
     return 1;
 }
@@ -76,7 +76,7 @@ static int torch_noise_simplex3D(lua_State *L)
     }
     auto fn = FastNoise::New<FastNoise::Simplex>();
     fn->SetScale(scale);
-    fn->GenUniformGrid3D(&res->storage->data[res->storageOffset], xstart, ystart, zstart, xsize, ysize, zsize, seed);
+    fn->GenUniformGrid3D(&res->storage->data[res->storageOffset], xstart, ystart, zstart, xsize, ysize, zsize, 1.0, 1.0, 1.0, seed);
     luaT_pushudata(L, res, "torch.FloatTensor");
     return 1;
 }
@@ -113,7 +113,7 @@ static int torch_noise_node2D(lua_State *L)
     }
     auto fn = FastNoise::NewFromEncodedNodeTree(str);
     if (bool(fn) == false) luaL_error(L, usage_str, "can not create noise generator from str");
-    fn->GenUniformGrid2D(&res->storage->data[res->storageOffset], xstart, ystart, xsize, ysize, seed);
+    fn->GenUniformGrid2D(&res->storage->data[res->storageOffset], xstart, ystart, xsize, ysize, 1.0, 1.0, seed);
     luaT_pushudata(L, res, "torch.FloatTensor");
     return 1;
 }
@@ -154,7 +154,7 @@ static int torch_noise_node3D(lua_State *L)
     }
     auto fn = FastNoise::NewFromEncodedNodeTree(str);
     if (bool(fn) == false) luaL_error(L, usage_str, "can not create noise generator from str");
-    fn->GenUniformGrid3D(&res->storage->data[res->storageOffset], xstart, ystart, zstart, xsize, ysize, zsize, seed);
+    fn->GenUniformGrid3D(&res->storage->data[res->storageOffset], xstart, ystart, zstart, xsize, ysize, zsize, 1.0, 1.0, 1.0, seed);
     luaT_pushudata(L, res, "torch.FloatTensor");
     return 1;
 }

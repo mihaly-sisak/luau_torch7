@@ -13,5 +13,6 @@ xxd -i torch.lua > torch_lua.c
 cd ../..
 cmake -G Ninja -B _build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build _build --config RelWithDebInfo
-./_build/RelWithDebInfo/bin/luau_example torch7/generated/luau_test.lua
-./_build/RelWithDebInfo/bin/luau_example example.lua
+# /RelWithDebInfo/bin
+./_build/luau_example torch7/generated/luau_test.lua
+#./_build/luau_example example.lua

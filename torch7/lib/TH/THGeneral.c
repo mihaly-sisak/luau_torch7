@@ -159,14 +159,14 @@ void THSetGCHandler( void (*torchGCFunction_)(void *data), void *data )
 
 /* it is guaranteed the allocated size is not bigger than PTRDIFF_MAX */
 static ptrdiff_t getAllocSize(void *ptr) {
-#if defined(__unix) && defined(HAVE_MALLOC_USABLE_SIZE)
+#if defined(__unix)
   return malloc_usable_size(ptr);
 #elif defined(__APPLE__)
   return malloc_size(ptr);
 #elif defined(_WIN32)
   if(ptr) { return _msize(ptr); } else { return 0; }
 #else
-  return 0;
+#error "no malloc size implementation"
 #endif
 }
 
