@@ -98,11 +98,17 @@ static int torch_Storage_(retain)(lua_State *L)
   return 0;
 }
 
-static int torch_Storage_(free)(lua_State *L)
+/*static int torch_Storage_(free)(lua_State *L)
 {
   THStorage *storage = luaT_checkudata(L, 1, torch_Storage);
   THStorage_(free)(storage);
   return 0;
+}*/
+
+static void torch_Storage_(free)(void* p)
+{
+  THStorage *storage = *((THStorage**)p);
+  THStorage_(free)(storage);
 }
 
 static int torch_Storage_(resize)(lua_State *L)
@@ -265,8 +271,8 @@ static int torch_Storage_(read)(lua_State *L)
 }
 
 static const struct luaL_Reg torch_Storage_(_) [] = {
-  {"retain", torch_Storage_(retain)},
-  {"free", torch_Storage_(free)},
+//  {"retain", torch_Storage_(retain)},
+//  {"free", torch_Storage_(free)},
   {"size", torch_Storage_(__len__)},
   {"elementSize", torch_Storage_(elementSize)},
   {"__len__", torch_Storage_(__len__)},
@@ -276,8 +282,8 @@ static const struct luaL_Reg torch_Storage_(_) [] = {
   {"fill", torch_Storage_(fill)},
   {"copy", torch_Storage_(copy)},
   {"totable", torch_Storage_(totable)},
-  {"write", torch_Storage_(write)},
-  {"read", torch_Storage_(read)},
+//  {"write", torch_Storage_(write)},
+//  {"read", torch_Storage_(read)},
 #if defined(TH_REAL_IS_CHAR) || defined(TH_REAL_IS_BYTE)
   {"string", torch_Storage_(string)},
 #endif

@@ -53,6 +53,8 @@ static int luaL_typerror(lua_State *L, int narg, const char *tname)
 
 /* C functions */
 
+typedef void (*luau_dtor)(void*);
+
 LUAT_API void* luaT_alloc(lua_State *L, ptrdiff_t size);
 LUAT_API void* luaT_realloc(lua_State *L, void *ptr, ptrdiff_t size);
 LUAT_API void luaT_free(lua_State *L, void *ptr);
@@ -60,10 +62,10 @@ LUAT_API void luaT_free(lua_State *L, void *ptr);
 LUAT_API void luaT_setfuncs(lua_State *L, const luaL_Reg *l, int nup);
 
 LUAT_API const char* luaT_newlocalmetatable(lua_State *L, const char *tname, const char *parent_tname,
-                                            lua_CFunction constructor, lua_CFunction destructor, lua_CFunction factory, int moduleidx);
+                                            lua_CFunction constructor, luau_dtor destructor, lua_CFunction factory, int moduleidx);
 
 LUAT_API const char* luaT_newmetatable(lua_State *L, const char *tname, const char *parenttname,
-                                       lua_CFunction constructor, lua_CFunction destructor, lua_CFunction factory);
+                                       lua_CFunction constructor, luau_dtor destructor, lua_CFunction factory);
 
 LUAT_API int luaT_pushmetatable(lua_State *L, const char *tname);
 

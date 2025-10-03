@@ -102,11 +102,19 @@ static int torch_Timer_reset(lua_State *L)
   return 1;
 }
 
+/* luaT_free(L, p) == free(p)
 static int torch_Timer_free(lua_State *L)
 {
   Timer *timer = luaT_checkudata(L, 1, "torch.Timer");
   luaT_free(L, timer);
   return 0;
+}
+*/
+
+static void torch_Timer_free(void* p)
+{
+  Timer *timer = *((Timer**)p);
+  free(timer);
 }
 
 static int torch_Timer_stop(lua_State *L)

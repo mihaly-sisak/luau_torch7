@@ -7,11 +7,17 @@ int torch_Generator_new(lua_State *L)
   return 1;
 }
 
-int torch_Generator_free(lua_State *L)
+/*int torch_Generator_free(lua_State *L)
 {
   THGenerator *gen= luaT_checkudata(L, 1, torch_Generator);
   THGenerator_free(gen);
   return 0;
+}*/
+
+void torch_Generator_free(void* p)
+{
+  THGenerator *gen = *((THGenerator**)p);
+  THGenerator_free(gen);
 }
 
 static int torch_Generator_write(lua_State *L)
@@ -34,8 +40,8 @@ static int torch_Generator_read(lua_State *L)
 
 
 static const struct luaL_Reg torch_Generator_table_ [] = {
-  {"write", torch_Generator_write},
-  {"read", torch_Generator_read},
+//  {"write", torch_Generator_write},
+//  {"read", torch_Generator_read},
   {NULL, NULL}
 };
 

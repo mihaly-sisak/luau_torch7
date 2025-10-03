@@ -1,0 +1,32 @@
+%language=C
+%struct-type
+%readonly-tables
+%global-table
+%compare-strncmp
+%define lookup-function-name get_torch_type_entry
+%{
+#include <string.h>
+#include "torch_types.h"
+%}
+struct torch_type_entry;
+%%
+torch.ByteStorage,   torch_type_ByteStorage
+torch.CharStorage,   torch_type_CharStorage
+torch.ShortStorage,  torch_type_ShortStorage
+torch.IntStorage,    torch_type_IntStorage
+torch.LongStorage,   torch_type_LongStorage
+torch.FloatStorage,  torch_type_FloatStorage
+torch.DoubleStorage, torch_type_DoubleStorage
+torch.HalfStorage,   torch_type_HalfStorage
+torch.ByteTensor,    torch_type_ByteTensor
+torch.CharTensor,    torch_type_CharTensor
+torch.ShortTensor,   torch_type_ShortTensor
+torch.IntTensor,     torch_type_IntTensor
+torch.LongTensor,    torch_type_LongTensor
+torch.FloatTensor,   torch_type_FloatTensor
+torch.DoubleTensor,  torch_type_DoubleTensor
+torch.HalfTensor,    torch_type_HalfTensor
+torch.Timer,         torch_type_Timer
+torch.Generator,     torch_type_Generator
+torch.Allocator,     torch_type_Allocator
+%%

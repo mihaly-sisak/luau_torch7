@@ -1,6 +1,7 @@
 Torch7 uses the [cwrap](https://github.com/torch/cwrap) and [paths](https://github.com/torch/paths) luarocks to generate C code.
 This directory contains the generated code, as it needs to be modified after generation to compile with Luau.
 
+ - `torch_types.*` Luau garbage collection destructor lookup helper
  - `lua_cwrap_to_c.sh` Script documenting lua code generation steps
  - `luau_test.lua` Amalgam of the `torch7/test` lua scripts, modified to make sense with Luau
  - `random.c` Generated code from [torch7/random.lua](../random.lua), modified to work with Luau

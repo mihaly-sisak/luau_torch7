@@ -8,3 +8,4 @@ out.perf
 perf.data
 perf.data.old
 asan.log.*
+massif.out.*

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "luaT.h"
+#include "torch_types.h"
 
 void* luaT_alloc(lua_State *L, ptrdiff_t size)
 {
@@ -140,21 +141,26 @@ static int luaT_mt__call(lua_State *L);
 static int luaT_cmt__call(lua_State *L);
 static int luaT_cmt__newindex(lua_State *L);
 
+static luau_dtor luau_dtor_arr[torch_type_size];
+
 const char* luaT_newmetatable(lua_State *L, const char *tname, const char *parent_tname,
-                              lua_CFunction constructor, lua_CFunction destructor, lua_CFunction factory)
+                              lua_CFunction constructor, luau_dtor destructor, lua_CFunction factory)
 {
   return luaT_newlocalmetatable(L, tname, parent_tname,
                                 constructor, destructor, factory, 0);
 }
 
 const char* luaT_newlocalmetatable(lua_State *L, const char *tname, const char *parent_tname,
-                                   lua_CFunction constructor, lua_CFunction destructor, lua_CFunction factory, int moduleidx)
+                                   lua_CFunction constructor, luau_dtor destructor, lua_CFunction factory, int moduleidx)
 {
+  int id = get_torch_type_entry(tname, strlen(tname))->id;
+  luau_dtor_arr[id] = destructor;
   lua_pushcfunction(L, luaT_lua_newmetatable, "luaT_newlocalmetatable");
   lua_pushstring(L, tname);
   (parent_tname ? (void)lua_pushstring(L, parent_tname) : lua_pushnil(L));
   (constructor ? lua_pushcfunction(L, constructor, "luaT_newlocalmetatable_constructor") : lua_pushnil(L));
-  (destructor ? lua_pushcfunction(L, destructor, "luaT_newlocalmetatable_destructor") : lua_pushnil(L));
+  //(destructor ? lua_pushcfunction(L, destructor, "luaT_newlocalmetatable_destructor") : lua_pushnil(L));
+  lua_pushnil(L);
   (factory ? lua_pushcfunction(L, factory, "luaT_newlocalmetatable_factory") : lua_pushnil(L));
   (moduleidx > 0 ? lua_pushvalue(L, moduleidx) : lua_pushnil(L));
   lua_call(L, 6, 1);
@@ -313,7 +319,15 @@ void luaT_pushudata(lua_State *L, void *udata, const char *tname)
 {
   if(udata)
   {
-    void **udata_p = lua_newuserdata(L, sizeof(void*));
+    int id = get_torch_type_entry(tname, strlen(tname))->id;
+    luau_dtor dtor = luau_dtor_arr[id];
+    void **udata_p;
+    if (dtor){
+      udata_p = lua_newuserdatadtor(L, sizeof(void*), dtor);
+    }
+    else {
+      udata_p = lua_newuserdata(L, sizeof(void*));
+    }
     *udata_p = udata;
     if(!luaT_pushmetatable(L, tname))
       luaL_error(L, "Torch internal problem: cannot find metatable for type <%s>", tname);

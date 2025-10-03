@@ -8,7 +8,7 @@ option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" OFF)
 message("LUAU_TORCH7_EXAMPLE = ${LUAU_TORCH7_EXAMPLE}")
 message("LUAU_TORCH7_NOISE   = ${LUAU_TORCH7_NOISE}")
 
-#add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
+add_compile_options(-fno-omit-frame-pointer -mno-omit-leaf-frame-pointer)
 
 #add_compile_options(-fsanitize=address)
 #add_link_options(-fsanitize=address)
@@ -86,6 +86,7 @@ set(torch7_src
     ./torch7/generated/random.c
     ./torch7/generated/TensorMath.c
     ./torch7/generated/torch_lua.c
+    ./torch7/generated/torch_types.c
 )
 
 add_library(torch7 ${torch7_src})
@@ -94,6 +95,7 @@ target_compile_definitions(torch7 PUBLIC LUA_VERSION_NUM=501)
 target_compile_definitions(torch7 PUBLIC LUAU=1)
 
 target_include_directories(torch7 PRIVATE
+    ./torch7/generated
     ./torch7/lib/luaT
     ./torch7/lib/TH
     ./torch7
