@@ -10,6 +10,7 @@ if [[ $ARG1 == "--rst" ]]; then
 fi
 cd torch7/generated
 xxd -i torch.lua > torch_lua.c
+gperf torch_types.gperf > torch_types.c
 cd ../..
 cmake -G Ninja -B _build -S . -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build _build --config RelWithDebInfo

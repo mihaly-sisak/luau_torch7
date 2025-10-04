@@ -1,7 +1,6 @@
 _build
 .vscode
 torch7/lib/TH/THGeneral.h
-perf.sh
 flame_graph.svg
 out.folded
 out.perf
