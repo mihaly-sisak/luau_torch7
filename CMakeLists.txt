@@ -19,6 +19,8 @@ FetchContent_Declare(
     luau
     GIT_REPOSITORY https://github.com/luau-lang/luau.git
     GIT_TAG        origin/master
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
 )
 
 set(LUAU_BUILD_CLI   OFF CACHE BOOL "Build CLI"                      FORCE)
