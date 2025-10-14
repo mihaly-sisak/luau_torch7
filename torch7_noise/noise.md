@@ -12,31 +12,43 @@ The *Torch* package adopts the same concept, so that calling a function directly
 The following two calls are equivalent.
 
 ```lua
-torch.simplex2D(x, 100.0, 0, 0, 8, 8, 1337)
-x:simplex2D(100.0, 0, 0, 8, 8, 1337)
+torch.simplex2D(x, 0, 0, 8, 8, 1, 1, 1337)
+x:simplex2D(0, 0, 8, 8, 1, 1, 1337)
 ```
 
 The functions can be used in the following manner.
 
 ```lua
-res1 = torch.simplex2D(100.0, 0, 0, 8, 8, 1337)   -- case 1
+res1 = torch.simplex2D(0, 0, 8, 8, 1, 1, 1337)   -- case 1
 
 res2 = torch.Tensor()
-torch.simplex2D(res2, 100.0, 0, 0, 8, 8, 1337)    -- case 2
+torch.simplex2D(res2, 0, 0, 8, 8, 1, 1, 1337)    -- case 2
 ```
 
 The advantage of second case is, same `res2` `FloatTensor` can be used successively in a loop without any new allocation.
 
 ## Noise functions ##
 
-### [res] torch.simplex2D([res,] scale, xstart, ystart, xsize, ysize, seed) ###
+### [res] torch.simplex2D([res,] xstart, ystart, xsize, ysize, xstep, ystep, seed) ###
 
-`x = torch.simplex2D(scale, xstart, ystart, xsize, ysize, seed)` returns a 2D `FloatTensor`, containing samples of Simplex noise. Sampling happens at integer values, starting at `(xstart, ystart)`, ending with `(xstart+xsize-1, ystart+ysize-1)`. The output tensor has a size of `(xsize, ysize)`.
+`x = torch.simplex2D(xstart, ystart, xsize, ysize, xstep, ystep, seed)` returns a 2D `FloatTensor`, containing samples of Simplex noise. Sampling starts at `(xstart, ystart)`. Distance between the sampling points are `(xstep, ystep)`. The output tensor has a size of `(xsize, ysize)`.
 
-The Simplex noise can be customized with a `scale` (float) and `seed` (integer) value. Check out the FastNoise2 Node Editor for more information.
+The Simplex noise can be customized with a `seed` (integer) value. Check out the FastNoise2 Node Editor for more information.
 
-### [res] torch.node2D([res,] encoded_node_tree_string, xstart, ystart, xsize, ysize, seed) ###
+### [res] torch.node2D([res,] encoded_node_tree_string, xstart, ystart, xsize, ysize, xstep, ystep, seed) ###
 
-`x = torch.node2D(encoded_node_tree_string, xstart, ystart, xsize, ysize, seed)` returns a 2D `FloatTensor`, containing samples of coherent noise. Sampling happens at integer values, starting at `(xstart, ystart)`, ending with `(xstart+xsize-1, ystart+ysize-1)`. The output tensor has a size of `(xsize, ysize)`.
+`x = torch.node2D(encoded_node_tree_string, xstart, ystart, xsize, ysize, xstep, ystep, seed)` returns a 2D `FloatTensor`, containing samples of coherent noise. Sampling starts at `(xstart, ystart)`. Distance between the sampling points are `(xstep, ystep)`. The output tensor has a size of `(xsize, ysize)`.
+
+The encoded node tree string can be obtained by creating a noise configuration with FastNoise2 Node Editor.
+
+### [res] torch.simplex3D([res,] xstart, ystart, zstart, xsize, ysize, zsize, xstep, ystep, zstep, seed) ###
+
+`x = torch.simplex3D(xstart, ystart, zstart, xsize, ysize, zsize, xstep, ystep, zstep, seed)` returns a 3D `FloatTensor`, containing samples of Simplex noise. Sampling starts at `(xstart, ystart, zstart)`. Distance between the sampling points are `(xstep, ystep, zstep)`. The output tensor has a size of `(xsize, ysize, zsize)`.
+
+The Simplex noise can be customized with a `seed` (integer) value. Check out the FastNoise2 Node Editor for more information.
+
+### [res] torch.node3D([res,] encoded_node_tree_string, xstart, ystart, zstart, xsize, ysize, zsize, xstep, ystep, zstep, seed) ###
+
+`x = torch.node3D(encoded_node_tree_string, xstart, ystart, zstart, xsize, ysize, zsize, xstep, ystep, zstep, seed)` returns a 3D `FloatTensor`, containing samples of coherent noise. Sampling starts at `(xstart, ystart, zstart)`. Distance between the sampling points are `(xstep, ystep, zstep)`. The output tensor has a size of `(xsize, ysize, zsize)`.
 
 The encoded node tree string can be obtained by creating a noise configuration with FastNoise2 Node Editor.
