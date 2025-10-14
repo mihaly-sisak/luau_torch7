@@ -3,7 +3,7 @@ project(LuauTorch7 C)
 include(FetchContent)
 
 option(LUAU_TORCH7_EXAMPLE "Build standalone example exe"        ON)
-option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" OFF)
+option(LUAU_TORCH7_NOISE   "Include FastNoise2 noise generation" ON)
 
 message("LUAU_TORCH7_EXAMPLE = ${LUAU_TORCH7_EXAMPLE}")
 message("LUAU_TORCH7_NOISE   = ${LUAU_TORCH7_NOISE}")
@@ -21,6 +21,8 @@ FetchContent_Declare(
     GIT_TAG        origin/master
     GIT_SHALLOW    TRUE
     GIT_PROGRESS   TRUE
+    PATCH_COMMAND  git apply ${CMAKE_CURRENT_SOURCE_DIR}/luau_extern_fix.patch
+    UPDATE_DISCONNECTED 1
 )
 
 set(LUAU_BUILD_CLI   OFF CACHE BOOL "Build CLI"                      FORCE)
@@ -170,7 +172,9 @@ if (LUAU_TORCH7_NOISE)
     FetchContent_Declare(
         FastNoise2
         GIT_REPOSITORY https://github.com/Auburn/FastNoise2.git
-        GIT_TAG        origin/NewFastSIMD
+        GIT_TAG        d9b684179aa7a90c997e262dfa1a770b24555707 # origin/NewFastSIMD 2025 Oct 4
+        GIT_SHALLOW    TRUE
+        GIT_PROGRESS   TRUE
     )
 
     set(FASTNOISE2_TOOLS     ON  CACHE BOOL "Build \"Node Editor\" executable"                                                                          FORCE)

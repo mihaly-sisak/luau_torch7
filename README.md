@@ -60,20 +60,39 @@ Output with `LUAU_TORCH7_NOISE` enabled:
  2  2  2
 [torch.FloatTensor of size 3x3]
 
-noise:
+simplex2D:
     generated and filtered 5244100 values
-    took 0.1268852550019801 seconds
+    took 0.12464120599906892 seconds
     min = -0.999998927116394, max = 0.999998927116394
     num of indexes = 281666
+
+node2D:
+    generated and filtered 5244100 values
+    took 0.2929048950027209 seconds
+    min = -1, max = 1
+    num of indexes = 378937
+
+simplex3D:
+    generated and filtered 5268024 values
+    took 0.14669220199721167 seconds
+    min = -0.9968256950378418, max = 0.9970061779022217
+    num of indexes = 375681
+
+node3D:
+    generated and filtered 5268024 values
+    took 0.5029356320010265 seconds
+    min = -1, max = 1
+    num of indexes = 367336
 
 tracetest3
 tracetest2
 tracetest1
-Runtime error: [string "example.lua"]:33: example error
-[string "example.lua"]:33
-[string "example.lua"]:38
-[string "example.lua"]:43
-[string "example.lua"]:46
+Runtime error: [string "example.lua"]:37: example error
+[string "example.lua"]:37 function tracetest1
+[string "example.lua"]:42 function tracetest2
+[string "example.lua"]:47 function tracetest3
+[string "example.lua"]:50
+
 ```
 
 ## Tests

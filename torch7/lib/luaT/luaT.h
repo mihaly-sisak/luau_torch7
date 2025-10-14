@@ -1,12 +1,6 @@
 #ifndef LUAT_UTILS_INC
 #define LUAT_UTILS_INC
 
-// LUA_API == `extern "C"`, should be only `extern` in C code
-#if defined(LUA_API) && !defined(__cplusplus)
-#undef LUA_API
-#define LUA_API extern
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
